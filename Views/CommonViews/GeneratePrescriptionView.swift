@@ -9,6 +9,7 @@ import SwiftUI
 import PDF_Generator
 
 struct GeneratePrescriptionView: View {
+    @StateObject var appState = AppState.shared
     @StateObject var prescription: Prescription
     @State var useDarkMode = false
     
@@ -21,7 +22,7 @@ struct GeneratePrescriptionView: View {
 //            .background(Color(.secondarySystemBackground))
 //            .environment(\.colorScheme, useDarkMode ? .dark : .light)
             
-            Section("Share") {
+            Section("Save") {
 //                Toggle("Show dark mode", isOn: $useDarkMode)
 //                    .toggleStyle(.switch)
 //                    .font(.callout)
@@ -29,19 +30,34 @@ struct GeneratePrescriptionView: View {
                     PrescriptionPreview(prescription: prescription, withPadding: true)
 //                        .environment(\.colorScheme, useDarkMode ? .dark : .light)
                 } label: {
-                    Label("Save to files", systemImage: "square.and.arrow.down")
+                    Label("Save PDF to files", systemImage: "square.and.arrow.down")
+                }
+            }
+            
+            if appState.user?.userType == .doctor {
+                Section("Share") {
+                    NearbyPatientsList(prescription: prescription)
+                }
+            }
+            else if appState.user?.userType == .patient {
+                Section("Schedule") {
+                    Button("Set Reminders", systemImage: "calendar.badge.clock", action: {
+                        
+                    })
                 }
             }
         }
         .listStyle(.grouped)
-        .navigationTitle("Share Prescription")
+        .navigationTitle(appState.user?.userType == .patient ? "Your Prescription" : "Share Prescription")
         .navigationBarTitleDisplayMode(.large)
     }
 }
 
 #Preview {
     var prescription = Prescription(
-        fullName: "Jaagrav Seal",
+        patientName: "Jaagrav Seal",
+        doctorName: "Sushan Mukhopadhyay",
+        speciality: "Cardiologist",
         vitals: Vitals(heartBpm: "92", bloodPressure: ["120", "80"], age: "21", tempInF: "98", gender: .male),
         symptoms: [
             Symptom(description: "Common cold", notes: "With runny nose and cough"),

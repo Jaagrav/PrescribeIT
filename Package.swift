@@ -23,14 +23,13 @@ let package = Package(
             appIcon: .placeholder(icon: .clock),
             accentColor: .presetColor(.indigo),
             supportedDeviceFamilies: [
-                .pad,
                 .phone
             ],
             supportedInterfaceOrientations: [
-                .portrait,
-                .landscapeRight,
-                .landscapeLeft,
-                .portraitUpsideDown(.when(deviceFamilies: [.pad]))
+                .portrait
+            ],
+            capabilities: [
+                .localNetwork(purposeString: "Allow to connect patient's and doctor's devices", bonjourServiceTypes: ["_prescribeit._tcp", "_prescribeit._udp"])
             ],
             appCategory: .medical
         )
@@ -46,7 +45,11 @@ let package = Package(
                 .product(name: "FluidGradient", package: "fluidgradient?tab=readme-ov-file"),
                 .product(name: "PDF-Generator", package: "pdf-generator")
             ],
-            path: "."
+            path: ".",
+            resources: [
+                .process("Resources")
+            ]
         )
-    ]
+    ],
+    swiftLanguageVersions: [.version("6")]
 )

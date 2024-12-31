@@ -1,16 +1,20 @@
 //
-//  DoctorHomeView.swift
+//  PatientHomeView.swift
 //  PrescribeIT
 //
-//  Created by Jaagrav Seal on 22/12/24.
+//  Created by Jaagrav Seal on 30/12/24.
 //
 
 import SwiftUI
 
-struct DoctorHomeView: View {
-    @State var searchText: String = ""
-    
-    @StateObject var sharedUser = AppState.shared
+enum SplitViews {
+case savedPrescriptions, getPrescription
+}
+
+struct PatientHomeView: View {
+    @State var searchText = ""
+    @StateObject var appState = AppState.shared
+    @State var splitViews: SplitViews = .savedPrescriptions
     
     func getGreetingMessage() -> String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -33,13 +37,12 @@ struct DoctorHomeView: View {
         NavigationView {
             ZStack {
                 GradientAnimation()
-                
                 ScrollView {
                     Text(getGreetingMessage())
                         .opacity(0.6)
                         .padding(.top, 32)
                     
-                    Text("Dr \(sharedUser.user!.firstName) \(sharedUser.user!.lastName)")
+                    Text("\(appState.user!.firstName) \(appState.user!.lastName)")
                         .font(.largeTitle)
                         .bold()
                         .multilineTextAlignment(.center)
@@ -48,12 +51,12 @@ struct DoctorHomeView: View {
                         HStack {
                             Image(systemName: "magnifyingglass")
                             TextField(
-                                "Search patient",
+                                "Search prescriptions",
                                 text: $searchText
                             )
                         }
                         .padding(.all, 12)
-                        .background(.background)
+                        .background(.background.opacity(0.5))
                         .cornerRadius(12)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
@@ -63,15 +66,28 @@ struct DoctorHomeView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
                     
-                    PatientsList()
+                    Picker("Split Views", selection: $splitViews) {
+                        Text("Saved Prescriptions").tag(SplitViews.savedPrescriptions)
+                        Text("New Prescriptions").tag(SplitViews.getPrescription)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(24)
+                    
+                    switch splitViews {
+                    case .savedPrescriptions:
+                        PrescriptionsList()
+                            .transition(.opacity)
+                    case .getPrescription:
+                        FetchPrescriptions()
+                            .transition(.opacity)
+                    }
                 }
-                
-                NewPrescriptionButton()
+                .animation(.easeInOut, value: splitViews)
             }
         }
     }
 }
 
 #Preview {
-    DoctorHomeView()
+    PatientHomeView()
 }

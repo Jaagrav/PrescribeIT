@@ -13,7 +13,7 @@ struct PrescriptionBuilderView: View {
     var body: some View {
         List {
             Section("Patient Name") {
-                TextField("e.g. Jaagrav Seal", text: $prescription.fullName)
+                TextField("e.g. Jaagrav Seal", text: $prescription.patientName)
                     .font(.largeTitle)
                     .fontWeight(.medium)
             }
@@ -112,7 +112,9 @@ struct PrescriptionBuilderView: View {
 
 #Preview {
     PrescriptionBuilderView(prescription: Prescription(
-            fullName: "Jaagrav Seal",
+            patientName: "Jaagrav Seal",
+            doctorName: "Sushan Mukhopadhyay",
+            speciality: "Cardiologist",
             vitals: Vitals(heartBpm: "92", bloodPressure: ["120", "80"], age: "21", tempInF: "98", gender: .male),
             symptoms: [
                 Symptom(description: "Common cold", notes: "With runny nose and cough"),

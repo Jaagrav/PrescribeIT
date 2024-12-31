@@ -1,5 +1,5 @@
 //
-//  medicineUtils.swift
+//  MedicineUtils.swift
 //  PrescribeIT
 //
 //  Created by Jaagrav Seal on 26/12/24.

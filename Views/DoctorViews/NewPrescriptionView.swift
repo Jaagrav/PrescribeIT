@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct NewPrescriptionView: View {
-    @ObservedObject var sharedPrescriptions = Prescriptions.shared
+    @StateObject var appState = AppState.shared
+    @StateObject var sharedPrescriptions = Prescriptions.shared
     @Binding var showDrawer: Bool
     
     @State var patientName = ""
@@ -18,7 +19,7 @@ struct NewPrescriptionView: View {
     @State var gender: Gender = .male
     
     func createNewPrescription() {
-        let prescription = Prescription(fullName: patientName, vitals: Vitals(heartBpm: heartRate, bloodPressure: bloodPressure, age: age, tempInF: "", gender: gender), symptoms: [], medicines: [])
+        let prescription = Prescription(patientName: patientName, doctorName: "\(appState.user?.firstName ?? "") \(appState.user?.lastName ?? "")", speciality: appState.user?.speciality ?? "", vitals: Vitals(heartBpm: heartRate, bloodPressure: bloodPressure, age: age, tempInF: "", gender: gender), symptoms: [], medicines: [])
         
         sharedPrescriptions.createPrescription(prescription: prescription)
     }

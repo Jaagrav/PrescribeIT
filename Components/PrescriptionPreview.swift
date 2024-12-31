@@ -10,7 +10,7 @@ import SwiftUI
 struct PrescriptionPreview: View {
     @StateObject var prescription: Prescription
     
-    @ObservedObject var sharedUser = SharedUser.shared
+    @ObservedObject var sharedUser = AppState.shared
     
     var withPadding: Bool = false
     
@@ -19,10 +19,10 @@ struct PrescriptionPreview: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Dr \(sharedUser.user.firstName) \(sharedUser.user.lastName)")
+                        Text("Dr \(prescription.doctorName)")
                             .font(.title3)
                             .fontWeight(.semibold)
-                        Text("\(sharedUser.user.speciality)")
+                        Text(prescription.speciality)
                             .font(.footnote)
                             .fontWeight(.medium)
                     }
@@ -34,7 +34,7 @@ struct PrescriptionPreview: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 12) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Patient Name: \(prescription.fullName)")
+                            Text("Patient Name: \(prescription.patientName)")
                                 .font(.caption2)
                             Text("Age: \(prescription.vitals.age) years • Gender: \(prescription.vitals.gender.rawValue.capitalized) • Pulse: \(prescription.vitals.heartBpm)bpm • Blood Pressure: \(prescription.vitals.bloodPressure[0])/\(prescription.vitals.bloodPressure[1])mmHg")
                                 .font(.caption2)
@@ -99,7 +99,7 @@ struct PrescriptionPreview: View {
                         Spacer()
                         
                         HStack {
-                            Text("Date: \(Date.now.formatted(.dateTime.year().month().day().hour().minute()))")
+                            Text("Date: \(prescription.createdAt.formatted(.dateTime.year().month().day().hour().minute()))")
                                 .font(.caption2)
                             Spacer()
                             Text("Signature")
