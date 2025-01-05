@@ -24,7 +24,7 @@ struct MedicinesList: View {
             MedicineListItem(medicine: $medicine, removeMedicine: removeMedicine)
         }
         Button("Add Medicine", systemImage: "plus") {
-            medicines.append(Medicine(schedule: MedicineSchedule(hour: 0, minutes: 0, days: [], isSOS: false), name: "", quantity: "", notes: ""))
+            medicines.append(Medicine(schedule: MedicineSchedule(daypart: [], days: [], isSOS: false), name: "", quantity: "", notes: ""))
             showDrawer = true
         }
         .sheet(isPresented: $showDrawer, onDismiss: {

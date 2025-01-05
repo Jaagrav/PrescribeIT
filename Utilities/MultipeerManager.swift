@@ -8,6 +8,13 @@
 import MultipeerConnectivity
 import Foundation
 
+struct Peer: Equatable, Hashable {
+    let peerID: MCPeerID
+    let age: String
+    let gender: String
+    let name: String
+    let userType: String
+}
 
 class MultipeerManager: NSObject, ObservableObject {
     private let serviceType = "prescribeit"
@@ -16,13 +23,17 @@ class MultipeerManager: NSObject, ObservableObject {
     private var advertiser: MCNearbyServiceAdvertiser
     private var browser: MCNearbyServiceBrowser
 
-    @Published var discoveredPeers: [MCPeerID] = []
+    @Published var discoveredPeers: [Peer] = []
     @Published var receivedPrescription: Prescription?
 
     init(user: User, userType: String) {
         self.myPeerID = MCPeerID(displayName: "\(user.firstName) \(user.lastName)")
         self.session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
-        self.advertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: ["userType": userType], serviceType: serviceType)
+        self.advertiser = MCNearbyServiceAdvertiser(
+            peer: myPeerID,
+            discoveryInfo: ["userType": user.userType.rawValue, "age": user.age, "gender": user.gender.rawValue],
+            serviceType: serviceType
+        )
         self.browser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: serviceType)
         super.init()
         self.session.delegate = self
@@ -51,28 +62,19 @@ class MultipeerManager: NSObject, ObservableObject {
 }
 
 extension MultipeerManager: MCSessionDelegate {
-    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        switch state {
-        case .connected:
-            if !discoveredPeers.contains(peerID) {
-                discoveredPeers.append(peerID)
-            }
-        case .notConnected:
-            discoveredPeers.removeAll { $0 == peerID }
-        default:
-            break
-        }
-    }
-
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         if let prescription = try? JSONDecoder().decode(Prescription.self, from: data) {
-            print(prescription)
-            receivedPrescription = prescription
+            self.receivedPrescription = prescription
+            print("Received prescription from \(peerID.displayName)")
         }
     }
 
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {}
+    
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {}
+
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {}
+
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {}
 }
 
@@ -84,13 +86,26 @@ extension MultipeerManager: MCNearbyServiceAdvertiserDelegate {
 
 extension MultipeerManager: MCNearbyServiceBrowserDelegate {
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
-        if !discoveredPeers.contains(peerID) {
-            discoveredPeers.append(peerID)
-            browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
+        guard let info = info,
+              let age = info["age"],
+              let gender = info["gender"],
+              let userType = info["userType"] else {
+            print("Missing discovery info for peer: \(peerID.displayName)")
+            return
         }
+
+        let newPeer = Peer(peerID: peerID, age: age, gender: gender, name: peerID.displayName, userType: userType)
+
+        if !self.discoveredPeers.contains(where: { $0.peerID == peerID }) {
+            self.discoveredPeers.append(newPeer)
+            print("Discovered peer: \(newPeer)")
+        }
+
+        browser.invitePeer(peerID, to: session, withContext: nil, timeout: 20)
     }
 
     func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        discoveredPeers.removeAll { $0 == peerID }
+        self.discoveredPeers.removeAll { $0.peerID == peerID }
+        print("Lost peer: \(peerID.displayName)")
     }
 }

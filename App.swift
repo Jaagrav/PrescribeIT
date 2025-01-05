@@ -1,5 +1,4 @@
 import SwiftUI
-import CoreBluetooth
 
 @main
 struct MyApp: App {

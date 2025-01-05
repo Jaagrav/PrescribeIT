@@ -8,26 +8,6 @@
 import Foundation
 
 func getMedicineScheduleString(medicine: Medicine) -> String {
-    let dayNames = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-    ]
-    
-    let timeFormatter = DateFormatter()
-    timeFormatter.dateFormat = "h:mm a"
-    
-    var components = DateComponents()
-    components.hour = medicine.schedule.hour
-    components.minute = medicine.schedule.minutes
-    let calendar = Calendar.current
-    let date = calendar.date(from: components) ?? Date()
-    let formattedTime = timeFormatter.string(from: date)
-    
     var formattedDays: String = ""
     if medicine.schedule.days.count == 7 {
         formattedDays = "Everyday"
@@ -39,9 +19,16 @@ func getMedicineScheduleString(medicine: Medicine) -> String {
             .joined(separator: ", ")
     }
     
-    if medicine.schedule.hour == -1 && medicine.schedule.minutes == -1 {
-        return "\(formattedDays)\(formattedDays != "" ? " • " : "")\(medicine.schedule.isSOS ? "SOS " : "")"
+    let dayparts = ["Morning", "Afternoon", "Evening", "Night"]
+    var formattedDaypart: String = ""
+    formattedDaypart = dayparts
+        .filter({ part in
+            medicine.schedule.daypart.contains(part)
+        })
+        .joined(separator: ", ")
+
+    if medicine.schedule.isSOS {
+        return "SOS • \(formattedDays) in the \(formattedDaypart)"
     }
-    
-    return "\(formattedDays) at \(formattedTime) \(medicine.schedule.isSOS ? "• SOS " : "")"
+    return "\(formattedDays) in the \(formattedDaypart)"
 }

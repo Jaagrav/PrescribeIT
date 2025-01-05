@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var sharedUser = AppState.shared
+    @ObservedObject var sharedUser = AppState.shared
     
     var body: some View {
         VStack {
-            switch sharedUser.appState {
+            switch sharedUser.appLevel {
             case .onboarding:
                 IntroView()
-            case .loggedin:
+            case .authorised:
                 switch sharedUser.user?.userType {
                 case .doctor:
                     DoctorHomeView()
@@ -21,8 +21,8 @@ struct ContentView: View {
                 }
             }
         }
-        .animation(.easeInOut, value: sharedUser.appState)
         .animation(.easeInOut, value: sharedUser.user?.userType)
+        .animation(.easeInOut, value: sharedUser.appLevel)
     }
 }
 

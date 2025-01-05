@@ -10,7 +10,7 @@ import SwiftUI
 struct DoctorHomeView: View {
     @State var searchText: String = ""
     
-    @StateObject var sharedUser = AppState.shared
+    @ObservedObject var sharedUser = AppState.shared
     
     func getGreetingMessage() -> String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -19,7 +19,7 @@ struct DoctorHomeView: View {
         if hour < 12 {
             greeting = "Good Morning"
         }
-        else if hour > 12 && hour < 16 {
+        else if hour >= 12 && hour <= 16 {
             greeting = "Good Afternoon"
         }
         else if hour > 16 && hour <= 23 {
@@ -53,7 +53,7 @@ struct DoctorHomeView: View {
                             )
                         }
                         .padding(.all, 12)
-                        .background(.background)
+                        .background(.background.opacity(0.6))
                         .cornerRadius(12)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
@@ -66,7 +66,7 @@ struct DoctorHomeView: View {
                     PatientsList()
                 }
                 
-                NewPrescriptionButton()
+                FloatingActionButtons()
             }
         }
     }

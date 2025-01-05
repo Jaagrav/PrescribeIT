@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwifCron
 
 struct MedicineListItem: View {
     @Binding var medicine: Medicine
@@ -17,7 +16,7 @@ struct MedicineListItem: View {
         VStack(alignment: .leading) {
             Text(medicine.name)
                 .fontWeight(.medium)
-            Text("\(getMedicineScheduleString(medicine: medicine))\(getMedicineScheduleString(medicine: medicine) != "" && medicine.quantity != "" ? "• " : "")\(medicine.quantity)")
+            Text("\(medicine.quantity)\(getMedicineScheduleString(medicine: medicine) != "" && medicine.quantity != "" ? " • " : "")\(getMedicineScheduleString(medicine: medicine))")
                 .font(.caption)
             if medicine.notes != "" { 
                 Text("Notes: \(medicine.notes)")

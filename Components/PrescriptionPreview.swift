@@ -10,7 +10,7 @@ import SwiftUI
 struct PrescriptionPreview: View {
     @StateObject var prescription: Prescription
     
-    @ObservedObject var sharedUser = AppState.shared
+    var sharedUser = AppState.shared
     
     var withPadding: Bool = false
     
@@ -78,7 +78,7 @@ struct PrescriptionPreview: View {
                                     VStack(alignment: .leading) {
                                         Text(medicine.name)
                                             .font(.caption2)
-                                        Text("\(getMedicineScheduleString(medicine: medicine))\(getMedicineScheduleString(medicine: medicine) != "" && medicine.quantity != "" ? "• " : "")\(medicine.quantity)")
+                                        Text("\(getMedicineScheduleString(medicine: medicine))\(getMedicineScheduleString(medicine: medicine) != "" && medicine.quantity != "" ? " • " : "")\(medicine.quantity)")
                                             .font(.caption2)
                                             .foregroundStyle(.secondary)
                                         if medicine.notes != "" {

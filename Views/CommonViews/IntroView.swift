@@ -7,13 +7,8 @@
 
 import SwiftUI
 
-enum UserType: String, CaseIterable, Identifiable {
-    case doctor, patient
-    var id: Self { self }
-}
- 
 struct IntroView: View {
-    @StateObject var appState = AppState.shared
+    @ObservedObject var appState = AppState.shared
     
     @State var userType: UserType = .doctor
     @State var firstName: String = "John"
@@ -24,7 +19,7 @@ struct IntroView: View {
     @State var age: String = "25"
     
     func submit() {
-        appState.appState = .loggedin
+        appState.appLevel = .authorised
         switch userType {
         case .doctor:
             appState.user = User(firstName: firstName, lastName: lastName, phoneNumber: phoneNumber, userType: .doctor, speciality: speciality)
@@ -72,13 +67,13 @@ struct IntroView: View {
                             .font(.title)
                     }
                     
-                    VStack(alignment: .leading) {
-                        Text("Phone Number")
-                            .font(.footnote)
-                        TextField("e.g. 123-456-789", text: $phoneNumber)
-                            .keyboardType(.numberPad)
-                            .font(.title)
-                    }
+//                    VStack(alignment: .leading) {
+//                        Text("Phone Number")
+//                            .font(.footnote)
+//                        TextField("e.g. 123-456-789", text: $phoneNumber)
+//                            .keyboardType(.numberPad)
+//                            .font(.title)
+//                    }
                     
                     switch userType {
                     case .doctor:

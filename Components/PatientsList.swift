@@ -18,8 +18,11 @@ struct PatientsList: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
                 .padding(.bottom, 12)
-            ForEach(sharedPrescriptions.prescriptions) { prescription in
-                PatientListItem(prescription: prescription)
+            if sharedPrescriptions.prescriptions.isEmpty {
+                Text("No patient prescriptions yet")
+            }
+            ForEach($sharedPrescriptions.prescriptions) { $prescription in
+                PatientListItem(prescription: $prescription)
             }
         }
     }

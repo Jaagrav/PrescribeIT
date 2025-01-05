@@ -17,37 +17,58 @@ struct MedicineScheduleSetter: View {
         "Wednesday",
         "Thursday",
         "Friday",
-        "Saturday"
+        "Saturday",
     ]
     
-    var customDateBinding: Binding<Date> {
-        Binding(
-            get: {
-                let component = DateComponents(hour: schedule.hour, minute: schedule.minutes)
-                return Calendar.current.date(from: component) ?? Date()
-            },
-            set: { newValue in
-                let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
-                schedule.hour = components.hour ?? 0
-                schedule.minutes = components.minute ?? 0
-            }
-        )
-    }
-
+    var dayParts = [
+        "Morning",
+        "Afternoon",
+        "Evening",
+        "Night"
+    ]
+    
     var body: some View {
         HStack {
             Toggle("Save of Soul", isOn: $schedule.isSOS)
                 .toggleStyle(.switch)
                 .font(.callout)
         }
-        HStack {
-            Text("Time")
-                .font(.callout)
-            Spacer()
-            DatePicker("Time", selection: customDateBinding, displayedComponents: .hourAndMinute)
-                .labelsHidden()
-                .datePickerStyle(.compact)
+        
+        VStack {
+            HStack {
+                Text("Time")
+                    .font(.callout)
+                Spacer()
+            }
+            HStack {
+                ForEach(dayParts, id: \.self) { dayPart in
+                    HStack {
+                        Text(dayPart)
+                            .font(.footnote)
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity)
+                    .foregroundColor(schedule.daypart.contains(dayPart) ? Color(uiColor: .systemBackground) : Color.primary)
+                    .background(
+                        schedule.daypart.contains(dayPart) ? Color.accentColor : Color(uiColor: .tertiarySystemBackground)
+                    )
+                    .cornerRadius(12)
+                    .onTapGesture {
+                        if schedule.daypart.contains(dayPart) {
+                            for (index, i) in schedule.daypart.enumerated() {
+                                if i == dayPart {
+                                    schedule.daypart.remove(at: index)
+                                }
+                            }
+                        }
+                        else {
+                            schedule.daypart.append(dayPart)
+                        }
+                    }
+                }
+            }
         }
+        
         VStack {
             HStack {
                 Text("Scheduled Days")
@@ -67,7 +88,7 @@ struct MedicineScheduleSetter: View {
                         .frame(maxWidth: .infinity)
                         .foregroundColor(schedule.days.contains(day) ? Color(uiColor: .systemBackground) : Color.primary)
                         .background(
-                            schedule.days.contains(day) ? Color.accentColor : Color(uiColor: .secondarySystemBackground)
+                            schedule.days.contains(day) ? Color.accentColor : Color(uiColor: .tertiarySystemBackground)
                         )
                         .cornerRadius(12)
                         .onTapGesture {
@@ -81,7 +102,6 @@ struct MedicineScheduleSetter: View {
                             else {
                                 schedule.days.append(day)
                             }
-                            print(schedule.days)
                         }
                     }
                 }

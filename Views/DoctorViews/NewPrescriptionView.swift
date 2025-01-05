@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct NewPrescriptionView: View {
-    @StateObject var appState = AppState.shared
-    @StateObject var sharedPrescriptions = Prescriptions.shared
+    var appState = AppState.shared
+    var sharedPrescriptions = Prescriptions.shared
+    
     @Binding var showDrawer: Bool
     
     @State var patientName = ""

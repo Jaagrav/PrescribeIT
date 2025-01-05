@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct PrescriptionBuilderView: View {
-    @StateObject var prescription: Prescription
+    @Binding var prescription: Prescription
+    @State var showDeletePrescription: Bool = false
     
     var body: some View {
         List {
@@ -90,7 +91,7 @@ struct PrescriptionBuilderView: View {
             }
             
             Button("Delete Patient", systemImage: "trash", role: .destructive) {
-                
+                showDeletePrescription = true
             }
             .foregroundColor(.red)
         }
@@ -105,25 +106,32 @@ struct PrescriptionBuilderView: View {
                         .fontWeight(.medium)
                 }
             }
-
+        }
+        .alert("You are about to delete \(prescription.patientName)'s prescription", isPresented: $showDeletePrescription) {
+            Button("Cancel", role: .cancel) {
+                showDeletePrescription = false
+            }
+            Button("Delete", role: .destructive) {
+                Prescriptions.shared.deletePrescription(prescription: prescription)
+            }
         }
     }
 }
 
-#Preview {
-    PrescriptionBuilderView(prescription: Prescription(
-            patientName: "Jaagrav Seal",
-            doctorName: "Sushan Mukhopadhyay",
-            speciality: "Cardiologist",
-            vitals: Vitals(heartBpm: "92", bloodPressure: ["120", "80"], age: "21", tempInF: "98", gender: .male),
-            symptoms: [
-                Symptom(description: "Common cold", notes: "With runny nose and cough"),
-                Symptom(description: "Mild fever", notes: ""),
-            ],
-            medicines: [
-                Medicine(schedule: MedicineSchedule(hour: -1, minutes: -1, days: [], isSOS: true), name: "Paracetamol", quantity: "650mg", notes: "SOS"),
-                Medicine(schedule: MedicineSchedule(hour: 22, minutes: 30, days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], isSOS: false), name: "Cough Syrup", quantity: "2mL", notes: "Every night before sleeping"),
-            ]
-        )
-    )
-}
+//#Preview {
+//    PrescriptionBuilderView(prescription: Prescription(
+//            patientName: "Jaagrav Seal",
+//            doctorName: "Sushan Mukhopadhyay",
+//            speciality: "Cardiologist",
+//            vitals: Vitals(heartBpm: "92", bloodPressure: ["120", "80"], age: "21", tempInF: "98", gender: .male),
+//            symptoms: [
+//                Symptom(description: "Common cold", notes: "With runny nose and cough"),
+//                Symptom(description: "Mild fever", notes: ""),
+//            ],
+//            medicines: [
+//                Medicine(schedule: MedicineSchedule(daypart: ["Afternoon", "Night"], days: ["Monday"], isSOS: true), name: "Paracetamol", quantity: "650mg", notes: "Take in case fever crosses 102 fahrenheitz"),
+//                Medicine(schedule: MedicineSchedule(daypart: ["Night"], days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], isSOS: false), name: "Cough Syrup", quantity: "2ml", notes: "Every night before sleeping"),
+//            ]
+//        )
+//    )
+//}

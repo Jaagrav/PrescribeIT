@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 class Vitals: ObservableObject, Codable {
     @Published var heartBpm: String
@@ -22,7 +23,6 @@ class Vitals: ObservableObject, Codable {
         self.gender = gender
     }
 
-    // MARK: - Codable
     enum CodingKeys: String, CodingKey {
         case heartBpm, bloodPressure, age, tempInF, gender
     }
@@ -46,7 +46,7 @@ class Vitals: ObservableObject, Codable {
     }
 }
 
-class Symptom: ObservableObject, Identifiable, Codable {
+class Symptom: ObservableObject, Identifiable, Codable, Equatable {
     @Published var description: String
     @Published var notes: String
 
@@ -58,7 +58,6 @@ class Symptom: ObservableObject, Identifiable, Codable {
         self.uid = UUID()
     }
 
-    // MARK: - Codable
     enum CodingKeys: String, CodingKey {
         case description, notes, uid
     }
@@ -76,44 +75,45 @@ class Symptom: ObservableObject, Identifiable, Codable {
         try container.encode(notes, forKey: .notes)
         try container.encode(uid, forKey: .uid)
     }
+    
+    static func == (lhs: Symptom, rhs: Symptom) -> Bool {
+        return lhs.uid == rhs.uid &&
+            lhs.notes == rhs.notes &&
+            lhs.description == rhs.description
+    }
 }
 
 class MedicineSchedule: ObservableObject, Identifiable, Codable {
-    @Published var hour: Int
-    @Published var minutes: Int
+    @Published var daypart: [String]
     @Published var days: [String]
     @Published var isSOS: Bool
 
-    init(hour: Int, minutes: Int, days: [String], isSOS: Bool) {
-        self.hour = hour
-        self.minutes = minutes
+    init(daypart: [String], days: [String], isSOS: Bool) {
+        self.daypart = daypart
         self.days = days
         self.isSOS = isSOS
     }
-
-    // MARK: - Codable
+ 
     enum CodingKeys: String, CodingKey {
-        case hour, minutes, days, isSOS
+        case daypart, days, isSOS
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        hour = try container.decode(Int.self, forKey: .hour)
-        minutes = try container.decode(Int.self, forKey: .minutes)
+        daypart = try container.decode([String].self, forKey: .daypart)
         days = try container.decode([String].self, forKey: .days)
         isSOS = try container.decode(Bool.self, forKey: .isSOS)
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(hour, forKey: .hour)
-        try container.encode(minutes, forKey: .minutes)
+        try container.encode(daypart, forKey: .daypart)
         try container.encode(days, forKey: .days)
         try container.encode(isSOS, forKey: .isSOS)
     }
 }
 
-class Medicine: ObservableObject, Identifiable, Codable {
+class Medicine: ObservableObject, Identifiable, Codable, Equatable {
     @Published var schedule: MedicineSchedule
     @Published var name: String
     @Published var quantity: String
@@ -129,7 +129,6 @@ class Medicine: ObservableObject, Identifiable, Codable {
         self.uid = UUID()
     }
 
-    // MARK: - Codable
     enum CodingKeys: String, CodingKey {
         case schedule, name, quantity, notes, uid
     }
@@ -151,9 +150,18 @@ class Medicine: ObservableObject, Identifiable, Codable {
         try container.encode(notes, forKey: .notes)
         try container.encode(uid, forKey: .uid)
     }
+    
+    static func == (lhs: Medicine, rhs: Medicine) -> Bool {
+        return lhs.uid == rhs.uid &&
+        lhs.notes == rhs.notes &&
+        lhs.name == rhs.name &&
+        lhs.schedule.days == rhs.schedule.days &&
+        lhs.schedule.daypart == rhs.schedule.daypart &&
+        lhs.quantity == rhs.quantity
+    }
 }
 
-class Prescription: ObservableObject, Identifiable, Codable {
+class Prescription: ObservableObject, Identifiable, Codable, Equatable {
     @Published var patientName: String
     @Published var doctorName: String
     @Published var speciality: String
@@ -174,8 +182,18 @@ class Prescription: ObservableObject, Identifiable, Codable {
         self.medicines = medicines
         self.speciality = speciality
     }
+    
+    init(uid: UUID, patientName: String, doctorName: String, createdAt: Date, speciality: String, vitals: Vitals, symptoms: [Symptom], medicines: [Medicine]) {
+        self.patientName = patientName
+        self.doctorName = doctorName
+        self.createdAt = createdAt
+        self.uid = uid
+        self.vitals = vitals
+        self.symptoms = symptoms
+        self.medicines = medicines
+        self.speciality = speciality
+    }
 
-    // MARK: - Codable
     enum CodingKeys: String, CodingKey {
         case patientName, doctorName, speciality, vitals, createdAt, symptoms, medicines, uid
     }
@@ -203,27 +221,37 @@ class Prescription: ObservableObject, Identifiable, Codable {
         try container.encode(medicines, forKey: .medicines)
         try container.encode(uid, forKey: .uid)
     }
+    
+    static func == (lhs: Prescription, rhs: Prescription) -> Bool {
+        return lhs.uid == rhs.uid &&
+                lhs.patientName == rhs.patientName &&
+                lhs.doctorName == rhs.doctorName &&
+                lhs.speciality == rhs.speciality &&
+                lhs.vitals.age == rhs.vitals.age &&
+                lhs.vitals.bloodPressure == rhs.vitals.bloodPressure &&
+                lhs.vitals.tempInF == rhs.vitals.tempInF &&
+                lhs.vitals.gender == rhs.vitals.gender &&
+                lhs.vitals.heartBpm == rhs.vitals.heartBpm &&
+                lhs.createdAt == rhs.createdAt &&
+                lhs.symptoms == rhs.symptoms &&
+                lhs.medicines == rhs.medicines
+    }
 }
 
 class Prescriptions: ObservableObject {
     @MainActor static let shared = Prescriptions()
     
-    @Published var prescriptions: [Prescription] = [
-        Prescription(
-            patientName: "Jaagrav Seal",
-            doctorName: "Sushan Mukhopadhyay",
-            speciality: "Cardiologist",
-            vitals: Vitals(heartBpm: "92", bloodPressure: ["120", "80"], age: "21", tempInF: "98", gender: .male),
-            symptoms: [
-                Symptom(description: "Common cold", notes: "With runny nose and cough"),
-                Symptom(description: "Mild fever", notes: ""),
-            ],
-            medicines: [
-                Medicine(schedule: MedicineSchedule(hour: 10, minutes: 0, days: ["Monday"], isSOS: true), name: "Paracetamol", quantity: "650mg", notes: "Take in case fever crosses 102 fahrenheitz"),
-                Medicine(schedule: MedicineSchedule(hour: 22, minutes: 30, days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], isSOS: false), name: "Cough Syrup", quantity: "2ml", notes: "Every night before sleeping"),
-            ]
-        )
-    ]
+    @Published var prescriptions: [Prescription] = [] {
+        didSet {
+            saveToUserDefaults()
+        }
+    }
+    
+    private var cancellables = Set<AnyCancellable>()
+    
+    private init() {
+        loadFromUserDefaults()
+    }
     
     func createPrescription(prescription: Prescription) {
         self.prescriptions.append(prescription)
@@ -233,16 +261,31 @@ class Prescriptions: ObservableObject {
         for (index, item) in self.prescriptions.enumerated() {
             if prescription.uid == item.uid {
                 self.prescriptions[index] = prescription
+                return
             }
         }
     }
-}
-
-enum Gender: String, CaseIterable, Identifiable, Codable {
-    case male = "Male"
-    case female = "Female"
-    case nonbinary = "Non-Binary"
-    case other = "Other"
-
-    var id: Self { self }
+    
+    func deletePrescription(prescription: Prescription) {
+        self.prescriptions.removeAll { $0.uid == prescription.uid }
+    }
+    
+    private func saveToUserDefaults() {
+        do {
+            let data = try JSONEncoder().encode(prescriptions)
+            UserDefaults.standard.set(data, forKey: "prescriptions")
+        } catch {
+            print("Failed to save prescriptions to UserDefaults: \(error)")
+        }
+    }
+    
+    private func loadFromUserDefaults() {
+        guard let data = UserDefaults.standard.data(forKey: "prescriptions") else { return }
+        do {
+            let loadedPrescriptions = try JSONDecoder().decode([Prescription].self, from: data)
+            self.prescriptions = loadedPrescriptions
+        } catch {
+            print("Failed to load prescriptions from UserDefaults: \(error)")
+        }
+    }
 }
