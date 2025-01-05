@@ -9,7 +9,7 @@ import SwiftUI
 import MultipeerConnectivity
 
 struct NearbyPatientsList: View {
-    var mcManager = MultipeerManager(user: AppState.shared.user!, userType: "doctor")
+    @StateObject var mcManager = MultipeerManager(user: AppState.shared.user!, userType: "doctor")
     @StateObject var prescription: Prescription
     
     var body: some View {

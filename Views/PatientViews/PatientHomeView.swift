@@ -18,7 +18,7 @@ struct PatientHomeView: View {
     @State var searchText = ""
     @ObservedObject var appState = AppState.shared
     @State var splitViews: SplitViews = .savedPrescriptions
-    var mcManager = MultipeerManager(user: AppState.shared.user!, userType: "patient")
+    @StateObject var mcManager = MultipeerManager(user: AppState.shared.user!, userType: "patient")
     
     var notificationManager = NotificationManager.shared
     
