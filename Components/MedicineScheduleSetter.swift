@@ -36,41 +36,6 @@ struct MedicineScheduleSetter: View {
         
         VStack {
             HStack {
-                Text("Time")
-                    .font(.callout)
-                Spacer()
-            }
-            HStack {
-                ForEach(dayParts, id: \.self) { dayPart in
-                    HStack {
-                        Text(dayPart)
-                            .font(.footnote)
-                    }
-                    .padding(12)
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(schedule.daypart.contains(dayPart) ? Color(uiColor: .systemBackground) : Color.primary)
-                    .background(
-                        schedule.daypart.contains(dayPart) ? Color.accentColor : Color(uiColor: .tertiarySystemBackground)
-                    )
-                    .cornerRadius(12)
-                    .onTapGesture {
-                        if schedule.daypart.contains(dayPart) {
-                            for (index, i) in schedule.daypart.enumerated() {
-                                if i == dayPart {
-                                    schedule.daypart.remove(at: index)
-                                }
-                            }
-                        }
-                        else {
-                            schedule.daypart.append(dayPart)
-                        }
-                    }
-                }
-            }
-        }
-        
-        VStack {
-            HStack {
                 Text("Scheduled Days")
                     .font(.callout)
                 Spacer()
@@ -101,6 +66,43 @@ struct MedicineScheduleSetter: View {
                             }
                             else {
                                 schedule.days.append(day)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if !schedule.days.isEmpty {
+            VStack {
+                HStack {
+                    Text("Time")
+                        .font(.callout)
+                    Spacer()
+                }
+                HStack {
+                    ForEach(dayParts, id: \.self) { dayPart in
+                        HStack {
+                            Text(dayPart)
+                                .font(.footnote)
+                        }
+                        .padding(12)
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(schedule.daypart.contains(dayPart) ? Color(uiColor: .systemBackground) : Color.primary)
+                        .background(
+                            schedule.daypart.contains(dayPart) ? Color.accentColor : Color(uiColor: .tertiarySystemBackground)
+                        )
+                        .cornerRadius(12)
+                        .onTapGesture {
+                            if schedule.daypart.contains(dayPart) {
+                                for (index, i) in schedule.daypart.enumerated() {
+                                    if i == dayPart {
+                                        schedule.daypart.remove(at: index)
+                                    }
+                                }
+                            }
+                            else {
+                                schedule.daypart.append(dayPart)
                             }
                         }
                     }

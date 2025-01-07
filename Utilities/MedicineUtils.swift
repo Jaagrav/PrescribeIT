@@ -8,7 +8,7 @@
 import Foundation
 
 func getMedicineScheduleString(medicine: Medicine) -> String {
-    var formattedDays: String = ""
+    var formattedDays: String = "", finalMessage: String = ""
     if medicine.schedule.days.count == 7 {
         formattedDays = "Everyday"
     } else {
@@ -26,9 +26,22 @@ func getMedicineScheduleString(medicine: Medicine) -> String {
             medicine.schedule.daypart.contains(part)
         })
         .joined(separator: ", ")
-
-    if medicine.schedule.isSOS {
-        return "SOS • \(formattedDays) in the \(formattedDaypart)"
+    
+    if formattedDays != "" {
+        finalMessage += "\(formattedDays)"
     }
-    return "\(formattedDays) in the \(formattedDaypart)"
+    
+    if formattedDaypart != "" {
+        finalMessage +=  " in the \(formattedDaypart)"
+    }
+    
+    if medicine.schedule.isSOS {
+        if finalMessage != "" {
+            finalMessage = "SOS • " + finalMessage
+        } else {
+            finalMessage = "SOS"
+        }
+    }
+    
+    return finalMessage
 }
