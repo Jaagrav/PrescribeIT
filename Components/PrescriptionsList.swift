@@ -10,7 +10,7 @@ import SwiftUI
 struct PrescriptionsList: View {
     @ObservedObject var sharedPrescriptions = Prescriptions.shared
     var body: some View {
-        VStack {
+        VStack(spacing: 22) {
             if sharedPrescriptions.prescriptions.isEmpty {
                 Text("No prescriptions saved yet")
             }
