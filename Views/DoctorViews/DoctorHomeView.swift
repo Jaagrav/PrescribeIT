@@ -63,7 +63,7 @@ struct DoctorHomeView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
                     
-                    PatientsList()
+                    PatientsList(searchText: searchText)
                 }
                 
                 FloatingActionButtons()
