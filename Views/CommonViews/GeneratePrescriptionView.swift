@@ -36,6 +36,7 @@ struct GeneratePrescriptionView: View {
                     PrescriptionPreview(prescription: prescription, withPadding: true)
                 } label: {
                     Label("Save PDF to files", systemImage: "square.and.arrow.down")
+                        .padding(.vertical, 12)
                 }
             }
             
@@ -50,6 +51,7 @@ struct GeneratePrescriptionView: View {
                             
                             activePrescription = nil
                         })
+                        .padding(.vertical, 12)
                     }
                     else {
                         Button("Set Reminders", systemImage: "calendar.badge.clock", action: {
@@ -58,8 +60,9 @@ struct GeneratePrescriptionView: View {
                             
                             activePrescription = notificationManager.getActivePrescriptionSynchronously(allPrescriptions: sharedPrescriptions.prescriptions)
                             
-                            notificationManager.sendNotification(title: "Medicine reminders set successfully!", body: "Prescription by Dr \(prescription.doctorName) is now active and you'll be notified when it's time to take medicines.")
+                            notificationManager.sendNotification(title: "Medicine reminders set successfully!", body: "Prescription by Dr \(prescription.doctor.fullName) is now active and you'll be notified when it's time to take medicines.")
                         })
+                        .padding(.vertical, 12)
                     }
                 }
                 
@@ -67,6 +70,7 @@ struct GeneratePrescriptionView: View {
                     showDeletePrescription = true
                 }
                 .foregroundColor(.red)
+                .padding(.vertical, 12)
             }
         }
         .onAppear {
@@ -75,7 +79,7 @@ struct GeneratePrescriptionView: View {
         .listStyle(.insetGrouped)
         .navigationTitle(appState.user?.userType == .patient ? "Your Prescription" : "Share Prescription")
         .navigationBarTitleDisplayMode(.large)
-        .alert("You are about to delete Dr \(prescription.doctorName)'s prescription", isPresented: $showDeletePrescription) {
+        .alert("You are about to delete Dr \(prescription.doctor.fullName)'s prescription", isPresented: $showDeletePrescription) {
             Button("Cancel", role: .cancel) {
                 showDeletePrescription = false
             }
@@ -90,8 +94,7 @@ struct GeneratePrescriptionView: View {
 #Preview {
     var prescription = Prescription(
         patientName: "Jaagrav Seal",
-        doctorName: "Sushan Mukhopadhyay",
-        speciality: "Cardiologist",
+        doctor: Doctor(fullName: "Sushan Mukhopadhyay", phoneNumber: "0123456789", speciality: "Cardiologist"),
         vitals: Vitals(heartBpm: "92", bloodPressure: ["120", "80"], age: "21", tempInF: "98", gender: .male),
         symptoms: [
             Symptom(description: "Common cold", notes: "With runny nose and cough"),

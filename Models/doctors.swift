@@ -8,6 +8,47 @@
 import Foundation
 import Combine
 
+class Doctor: ObservableObject, Identifiable, Codable {
+    @Published var uid: UUID
+    @Published var fullName: String
+    @Published var phoneNumber: String
+    @Published var speciality: String
+    
+    init(fullName: String, phoneNumber: String, speciality: String) {
+        self.uid = UUID()
+        self.fullName = fullName
+        self.phoneNumber = phoneNumber
+        self.speciality = speciality
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case fullName, phoneNumber, speciality, uid
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        fullName = try container.decode(String.self, forKey: .fullName)
+        phoneNumber = try container.decode(String.self, forKey: .phoneNumber)
+        speciality = try container.decode(String.self, forKey: .speciality)
+        uid = try container.decode(UUID.self, forKey: .uid)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(fullName, forKey: .fullName)
+        try container.encode(phoneNumber, forKey: .phoneNumber)
+        try container.encode(speciality, forKey: .speciality)
+        try container.encode(uid, forKey: .uid)
+    }
+    
+    static func == (lhs: Doctor, rhs: Doctor) -> Bool {
+        return lhs.uid == rhs.uid &&
+        lhs.fullName == rhs.fullName &&
+        lhs.phoneNumber == rhs.phoneNumber &&
+        lhs.speciality == rhs.speciality
+    }
+}
+
 class Vitals: ObservableObject, Codable {
     @Published var heartBpm: String
     @Published var bloodPressure: [String]
@@ -43,6 +84,14 @@ class Vitals: ObservableObject, Codable {
         try container.encode(age, forKey: .age)
         try container.encode(tempInF, forKey: .tempInF)
         try container.encode(gender.rawValue, forKey: .gender)
+    }
+    
+    static func == (lhs: Vitals, rhs: Vitals) -> Bool {
+        return lhs.age == rhs.age &&
+        lhs.bloodPressure == rhs.bloodPressure &&
+        lhs.tempInF == rhs.tempInF &&
+        lhs.gender == rhs.gender &&
+        lhs.heartBpm == rhs.heartBpm
     }
 }
 
@@ -111,6 +160,12 @@ class MedicineSchedule: ObservableObject, Identifiable, Codable {
         try container.encode(days, forKey: .days)
         try container.encode(isSOS, forKey: .isSOS)
     }
+    
+    static func == (lhs: MedicineSchedule, rhs: MedicineSchedule) -> Bool {
+        return lhs.isSOS == rhs.isSOS &&
+        lhs.days == rhs.days &&
+        lhs.daypart == rhs.daypart
+    }
 }
 
 class Medicine: ObservableObject, Identifiable, Codable, Equatable {
@@ -155,16 +210,13 @@ class Medicine: ObservableObject, Identifiable, Codable, Equatable {
         return lhs.uid == rhs.uid &&
         lhs.notes == rhs.notes &&
         lhs.name == rhs.name &&
-        lhs.schedule.days == rhs.schedule.days &&
-        lhs.schedule.daypart == rhs.schedule.daypart &&
         lhs.quantity == rhs.quantity
     }
 }
 
 class Prescription: ObservableObject, Identifiable, Codable, Equatable {
     @Published var patientName: String
-    @Published var doctorName: String
-    @Published var speciality: String
+    @Published var doctor: Doctor
     @Published var vitals: Vitals
     @Published var createdAt: Date
     @Published var symptoms: [Symptom]
@@ -172,37 +224,34 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
 
     var uid: UUID
 
-    init(patientName: String, doctorName: String, speciality: String, vitals: Vitals, symptoms: [Symptom], medicines: [Medicine]) {
+    init(patientName: String, doctor: Doctor, vitals: Vitals, symptoms: [Symptom], medicines: [Medicine]) {
         self.patientName = patientName
-        self.doctorName = doctorName
         self.createdAt = Date.now
         self.uid = UUID()
         self.vitals = vitals
         self.symptoms = symptoms
         self.medicines = medicines
-        self.speciality = speciality
+        self.doctor = doctor
     }
     
-    init(uid: UUID, patientName: String, doctorName: String, createdAt: Date, speciality: String, vitals: Vitals, symptoms: [Symptom], medicines: [Medicine]) {
+    init(uid: UUID, patientName: String, doctor: Doctor, createdAt: Date, vitals: Vitals, symptoms: [Symptom], medicines: [Medicine]) {
         self.patientName = patientName
-        self.doctorName = doctorName
+        self.doctor = doctor
         self.createdAt = createdAt
         self.uid = uid
         self.vitals = vitals
         self.symptoms = symptoms
         self.medicines = medicines
-        self.speciality = speciality
     }
 
     enum CodingKeys: String, CodingKey {
-        case patientName, doctorName, speciality, vitals, createdAt, symptoms, medicines, uid
+        case patientName, doctor, vitals, createdAt, symptoms, medicines, uid
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         patientName = try container.decode(String.self, forKey: .patientName)
-        doctorName = try container.decode(String.self, forKey: .doctorName)
-        speciality = try container.decode(String.self, forKey: .speciality)
+        doctor = try container.decode(Doctor.self, forKey: .doctor)
         vitals = try container.decode(Vitals.self, forKey: .vitals)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         symptoms = try container.decode([Symptom].self, forKey: .symptoms)
@@ -213,9 +262,8 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(patientName, forKey: .patientName)
-        try container.encode(doctorName, forKey: .doctorName)
+        try container.encode(doctor, forKey: .doctor)
         try container.encode(vitals, forKey: .vitals)
-        try container.encode(speciality, forKey: .speciality)
         try container.encode(createdAt, forKey: .createdAt)
         try container.encode(symptoms, forKey: .symptoms)
         try container.encode(medicines, forKey: .medicines)
@@ -225,13 +273,6 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
     static func == (lhs: Prescription, rhs: Prescription) -> Bool {
         return lhs.uid == rhs.uid &&
                 lhs.patientName == rhs.patientName &&
-                lhs.doctorName == rhs.doctorName &&
-                lhs.speciality == rhs.speciality &&
-                lhs.vitals.age == rhs.vitals.age &&
-                lhs.vitals.bloodPressure == rhs.vitals.bloodPressure &&
-                lhs.vitals.tempInF == rhs.vitals.tempInF &&
-                lhs.vitals.gender == rhs.vitals.gender &&
-                lhs.vitals.heartBpm == rhs.vitals.heartBpm &&
                 lhs.createdAt == rhs.createdAt &&
                 lhs.symptoms == rhs.symptoms &&
                 lhs.medicines == rhs.medicines

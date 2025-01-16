@@ -20,7 +20,7 @@ struct NewPrescriptionView: View {
     @State var gender: Gender = .male
     
     func createNewPrescription() {
-        let prescription = Prescription(patientName: patientName, doctorName: "\(appState.user?.firstName ?? "") \(appState.user?.lastName ?? "")", speciality: appState.user?.speciality ?? "", vitals: Vitals(heartBpm: heartRate, bloodPressure: bloodPressure, age: age, tempInF: "", gender: gender), symptoms: [], medicines: [])
+        let prescription = Prescription(patientName: patientName, doctor: Doctor(fullName: "\(appState.user?.firstName ?? "") \(appState.user?.lastName ?? "")", phoneNumber: appState.user?.phoneNumber ?? "", speciality: appState.user?.speciality ?? ""), vitals: Vitals(heartBpm: heartRate, bloodPressure: bloodPressure, age: age, tempInF: "", gender: gender), symptoms: [], medicines: [])
         
         sharedPrescriptions.createPrescription(prescription: prescription)
     }

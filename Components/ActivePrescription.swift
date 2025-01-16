@@ -27,7 +27,7 @@ struct ActivePrescription: View {
                                     Text("Notes: \(medicine.notes)")
                                         .font(.footnote)
                                 }
-                                Text("Prescribed by **Dr \(activePrescription?.doctorName ?? "")**")
+                                Text("Prescribed by **Dr \(activePrescription?.doctor.fullName ?? "")**")
                                     .font(.footnote)
                             }
                             Spacer()

@@ -16,6 +16,7 @@ struct NearbyPatientsList: View {
         Section("Share with Nearby Patients") {
             if mcManager.discoveredPeers.isEmpty {
                Text("No patient devices found nearby")
+                    .padding(.vertical, 12)
             } else {
                ForEach(mcManager.discoveredPeers, id: \.self) { peer in
                    Button {
@@ -43,6 +44,7 @@ struct NearbyPatientsList: View {
 //                           .foregroundColor(.primary)
                        }
                    }
+                   .padding(.vertical, 12)
                }
             }
         }

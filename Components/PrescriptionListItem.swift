@@ -40,10 +40,10 @@ struct PrescriptionListItem: View {
                             }
                         }
                         
-                        Text("Dr \(prescription.doctorName)")
+                        Text("Dr \(prescription.doctor.fullName)")
                             .lineLimit(1)
                         
-                        Text("\(prescription.speciality) • \(prescription.medicines.count) Medicines • \(prescription.symptoms.count) Symptoms")
+                        Text("\(prescription.doctor.speciality) • \(prescription.medicines.count) Medicines • \(prescription.symptoms.count) Symptoms")
                             .font(.caption)
                             .opacity(0.6)
                             .padding(.top, 0.25)

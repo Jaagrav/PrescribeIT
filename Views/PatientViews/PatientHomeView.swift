@@ -125,7 +125,7 @@ struct PatientHomeView: View {
                             }
                             .padding(16)
                             .padding(.bottom, -16)
-                            Text("Dr \(mcManager.receivedPrescription!.doctorName) has just shared a prescription with you!")
+                            Text("Dr \(mcManager.receivedPrescription!.doctor.fullName) has just shared a prescription with you!")
                                 .padding(.horizontal, 16)
                                 .font(.caption)
                                 .opacity(0.6)

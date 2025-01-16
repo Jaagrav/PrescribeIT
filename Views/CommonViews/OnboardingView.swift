@@ -37,7 +37,7 @@ struct OnboardingView: View {
         VStack(spacing: 32) {
             FeatureBlock(icon: "heart.text.square", title: "Create Prescriptions", description: "Doctors can quickly create, share, and manage prescriptions with an intuitive interface.")
             
-            FeatureBlock(icon: "calendar.badge.clock", title: "Set Reminders", description: "Patients can easily set reminders on receiving prescriptions from their doctors.")
+            FeatureBlock(icon: "calendar.badge.clock", title: "Set Reminders at one click", description: "Patients can easily set reminders for all their medications at one click on receiving prescriptions from their doctors.")
             
             FeatureBlock(icon: "person.line.dotted.person.fill", title: "Share with patient offline", description: "Doctors can share prescriptions with their patients wirelessly without any internet connection or WiFi.")
             

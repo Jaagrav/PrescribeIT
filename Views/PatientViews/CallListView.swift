@@ -7,10 +7,33 @@
 
 import SwiftUI
 
-struct Doctor {
-    var fullName: String
-    var phoneNumber: String
-    var speciality: String
+struct DoctorListItem: View {
+    var doctor: Doctor
+    
+    var body: some View {
+        Link(destination: URL(string: "tel:\(doctor.phoneNumber)")!) {
+            HStack {
+                Image(systemName: "coat.fill")
+                    .resizable()
+                    .padding(6)
+                    .frame(maxWidth: 60, maxHeight: 60)
+                
+                VStack(alignment: .leading) {
+                    Text("Dr \(doctor.fullName)")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    Text("\(doctor.speciality) • \(doctor.phoneNumber)")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "phone")
+            }
+            .padding(.vertical, 12)
+        }
+    }
 }
 
 struct CallListItem: View {
@@ -54,6 +77,27 @@ struct CallListItem: View {
 }
 
 struct CallListView: View {
+    var sharedPrescriptions = Prescriptions.shared
+    
+    func getDoctors() -> [Doctor] {
+        var foundDoctors: [Doctor] = []
+        for prescription in sharedPrescriptions.prescriptions {
+            var doctorFound = false
+            
+            for doctor in foundDoctors {
+                if doctor.phoneNumber == prescription.doctor.phoneNumber {
+                    doctorFound = true
+                    break
+                }
+            }
+            
+            if !doctorFound {
+                foundDoctors.append(prescription.doctor)
+            }
+        }
+        return foundDoctors
+    }
+    
     var body: some View {
         HStack {
             Text("Call for Help")
@@ -64,7 +108,19 @@ struct CallListView: View {
         .padding(20)
         .padding(.bottom, -8)
         
+        Text("Find below a list of all known doctors and emergency services that you can reach out to for immediate help")
+            .font(.footnote)
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 20)
+        
         List {
+            if !getDoctors().isEmpty {
+                Section("Known Doctors") {
+                    ForEach(getDoctors()) { doctor in
+                        DoctorListItem(doctor: doctor)
+                    }
+                }
+            }
             Section("Emergency Services") {
                 CallListItem(title: "Apollo Hospital", number: "1066", icon: "ApolloLogo", desc: "Emergency Hotline for Apollo Multispeciality Hospitals.")
                 CallListItem(title: "Mental Health & Suicide Prevention", number: "9820466726", icon: "SuicidePrevention", desc: "A 24/7 helpline providing emotional support for individuals facing mental health challenges.")

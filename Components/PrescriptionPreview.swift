@@ -19,10 +19,10 @@ struct PrescriptionPreview: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Dr \(prescription.doctorName)")
+                        Text("Dr \(prescription.doctor.fullName)")
                             .font(.title3)
                             .fontWeight(.semibold)
-                        Text(prescription.speciality)
+                        Text(prescription.doctor.speciality)
                             .font(.footnote)
                             .fontWeight(.medium)
                     }
