@@ -48,84 +48,94 @@ struct IntroView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
+                .frame(maxWidth: 500)
                 
                 TabView(selection: $currentPage) {
                     OnboardingView()
+                        .frame(maxWidth: 500)
                         .tag(0)
-                    VStack(spacing: 24) {
-                        Picker("User Type", selection: $userType) {
-                            Text("Doctor").tag(UserType.doctor)
-                            Text("Patient").tag(UserType.patient)
-                        }
-                        .pickerStyle(.segmented)
-                        
-                        VStack(alignment: .leading) {
-                            Text("First Name")
-                                .font(.footnote)
-                            TextField("e.g. Jaagrav", text: $firstName)
-                                .font(.title)
-                        }
-                        
-                        VStack(alignment: .leading) {
-                            Text("Last Name")
-                                .font(.footnote)
-                            TextField("e.g. Seal", text: $lastName)
-                                .font(.title)
-                        }
-                        
-                        switch userType {
-                        case .doctor:
-                            VStack(alignment: .leading) {
-                                Text("Phone Number")
-                                    .font(.footnote)
-                                TextField("e.g. 123-456-789", text: $phoneNumber)
-                                    .keyboardType(.numberPad)
-                                    .font(.title)
+                    ScrollView {
+                        VStack(spacing: 24) {
+                            Picker("User Type", selection: $userType) {
+                                Text("Doctor").tag(UserType.doctor)
+                                Text("Patient").tag(UserType.patient)
                             }
-                            .transition(.opacity)
+                            .pickerStyle(.segmented)
+                            
                             VStack(alignment: .leading) {
-                                Text("Speciality")
+                                Text("First Name")
                                     .font(.footnote)
-                                TextField("e.g. Cardiologist, Dentist", text: $speciality)
+                                TextField("e.g. Jaagrav", text: $firstName)
                                     .font(.title)
+                                    .submitLabel(.done)
                             }
-                            .transition(.opacity)
-                        case .patient:
+                            
                             VStack(alignment: .leading) {
-                                Text("Age")
+                                Text("Last Name")
                                     .font(.footnote)
-                                TextField("e.g. 21, 47", text: $age)
-                                    .keyboardType(.numberPad)
+                                TextField("e.g. Seal", text: $lastName)
                                     .font(.title)
+                                    .submitLabel(.done)
                             }
-                            .transition(.opacity)
-                            VStack(alignment: .leading) {
-                                Text("Gender")
-                                    .font(.footnote)
-                                Picker("Gender", selection: $gender) {
-                                    Text("Male")
-                                        .tag(Gender.male)
-                                    Text("Female")
-                                        .tag(Gender.female)
-                                    Text("Non-binary")
-                                        .tag(Gender.nonbinary)
-                                    Text("Other")
-                                        .tag(Gender.other)
+                            
+                            switch userType {
+                            case .doctor:
+                                VStack(alignment: .leading) {
+                                    Text("Phone Number")
+                                        .font(.footnote)
+                                    TextField("e.g. 123-456-789", text: $phoneNumber)
+                                        .keyboardType(.numberPad)
+                                        .font(.title)
+                                        .submitLabel(.done)
                                 }
-                                .labelsHidden()
-                                .frame(maxWidth: .infinity)
-                                .overlay {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(.tertiary, lineWidth: 1)
+                                .transition(.opacity)
+                                VStack(alignment: .leading) {
+                                    Text("Speciality")
+                                        .font(.footnote)
+                                    TextField("e.g. Cardiologist, Dentist", text: $speciality)
+                                        .font(.title)
+                                        .submitLabel(.done)
                                 }
+                                .transition(.opacity)
+                            case .patient:
+                                VStack(alignment: .leading) {
+                                    Text("Age")
+                                        .font(.footnote)
+                                    TextField("e.g. 21, 47", text: $age)
+                                        .keyboardType(.numberPad)
+                                        .font(.title)
+                                        .submitLabel(.done)
+                                }
+                                .transition(.opacity)
+                                VStack(alignment: .leading) {
+                                    Text("Gender")
+                                        .font(.footnote)
+                                    Picker("Gender", selection: $gender) {
+                                        Text("Male")
+                                            .tag(Gender.male)
+                                        Text("Female")
+                                            .tag(Gender.female)
+                                        Text("Non-binary")
+                                            .tag(Gender.nonbinary)
+                                        Text("Other")
+                                            .tag(Gender.other)
+                                    }
+                                    .labelsHidden()
+                                    .frame(maxWidth: .infinity)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(.tertiary, lineWidth: 1)
+                                    }
+                                }
+                                .transition(.opacity)
                             }
-                            .transition(.opacity)
+                            
+                            Spacer()
                         }
-                        
-                        Spacer()
+                        .padding(.horizontal, 24)
+                        .animation(.easeInOut, value: userType)
                     }
-                    .padding(.horizontal, 24)
-                    .animation(.easeInOut, value: userType)
+                    .frame(maxWidth: 500)
                     .tag(1)
                 }
                 .tabViewStyle(PageTabViewStyle())
@@ -150,8 +160,10 @@ struct IntroView: View {
                     .background(Color.accentColor)
                     .cornerRadius(14)
                 }
+                .buttonStyle(.plain)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
+                .frame(maxWidth: 500)
             }
         }
     }

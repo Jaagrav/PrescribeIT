@@ -22,7 +22,13 @@ struct GeneratePrescriptionView: View {
     var body: some View {
         List {
             Section("Preview") {
-                PrescriptionPreview(prescription: prescription)
+                VStack(alignment: .center) {
+                    PrescriptionPreview(prescription: prescription)
+                }
+                .padding(4)
+                .border(Color(.secondaryLabel))
+                .padding(4)
+                .frame(maxWidth: .infinity)
             }
             
             Section("Save") {
@@ -66,7 +72,7 @@ struct GeneratePrescriptionView: View {
         .onAppear {
             activePrescription = notificationManager.getActivePrescriptionSynchronously(allPrescriptions: sharedPrescriptions.prescriptions)
         }
-        .listStyle(.grouped)
+        .listStyle(.insetGrouped)
         .navigationTitle(appState.user?.userType == .patient ? "Your Prescription" : "Share Prescription")
         .navigationBarTitleDisplayMode(.large)
         .alert("You are about to delete Dr \(prescription.doctorName)'s prescription", isPresented: $showDeletePrescription) {

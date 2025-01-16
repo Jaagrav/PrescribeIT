@@ -38,6 +38,7 @@ struct NewPrescriptionView: View {
                     Text("Cancel")
                         .foregroundColor(.red)
                 }
+                .buttonStyle(.plain)
             }
             .padding(20)
             .padding(.bottom, -20)
@@ -46,13 +47,14 @@ struct NewPrescriptionView: View {
                 Section("Patient Name") {
                     TextField("e.g. Jaagrav Seal", text: $patientName)
                         .font(.title)
+                        .padding(.vertical, 12)
                 }
                 
                 Section("General Information") {
                     HStack(spacing: 24) {
                         VStack(alignment: .leading) {
                             Text("Heart Rate (bpm)")
-                                .font(.subheadline)
+                                .font(.caption)
                             HStack {
                                 TextField("90", text: $heartRate)
                                     .keyboardType(.numberPad)
@@ -61,7 +63,7 @@ struct NewPrescriptionView: View {
                         }
                         VStack(alignment: .leading) {
                             Text("Blood Pressure (mmHg)")
-                                .font(.subheadline)
+                                .font(.caption)
                             HStack {
                                 TextField("120", text: $bloodPressure[0])
                                     .keyboardType(.numberPad)
@@ -74,11 +76,12 @@ struct NewPrescriptionView: View {
                             }
                         }
                     }
+                    .padding(.vertical, 12)
                     
                     HStack(spacing: 24) {
                         VStack(alignment: .leading) {
                             Text("Age (years)")
-                                .font(.subheadline)
+                                .font(.caption)
                             HStack {
                                 TextField("21", text: $age)
                                     .keyboardType(.numberPad)
@@ -87,7 +90,7 @@ struct NewPrescriptionView: View {
                         }
                         VStack(alignment: .leading) {
                             Text("Gender")
-                                .font(.subheadline)
+                                .font(.caption)
                             HStack {
                                 Picker("Gender", selection: $gender) {
                                     Text("Male")
@@ -109,9 +112,10 @@ struct NewPrescriptionView: View {
                             .frame(maxWidth: .infinity)
                         }
                     }
+                    .padding(.vertical, 12)
                 }
             }
-            .listStyle(.grouped)
+            .listStyle(.insetGrouped)
             
             Button {
                 createNewPrescription()
@@ -127,6 +131,8 @@ struct NewPrescriptionView: View {
                 .cornerRadius(12)
                 .padding(.horizontal, 24)
             }
+            .buttonStyle(.plain)
+            .padding(.bottom, 24)
         }
     }
 }

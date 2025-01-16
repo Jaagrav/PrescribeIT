@@ -47,7 +47,7 @@ struct MedicineScheduleSetter: View {
                     ForEach(days, id: \.self) { day in
                         HStack {
                             Text(day)
-                                .font(.footnote)
+                                .font(.caption2)
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity)
@@ -84,7 +84,7 @@ struct MedicineScheduleSetter: View {
                     ForEach(dayParts, id: \.self) { dayPart in
                         HStack {
                             Text(dayPart)
-                                .font(.footnote)
+                                .font(.caption2)
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity)

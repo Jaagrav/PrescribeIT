@@ -48,5 +48,8 @@ struct PatientListItem: View {
                 Divider()
             }
         }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .background(.clear)
     }
 }

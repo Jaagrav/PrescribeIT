@@ -30,6 +30,7 @@ struct NewSymptomView: View {
             Section("Complaint") {
                 TextField("e.g. Fever, Chest pain", text: $symptom.description)
                     .font(.title2)
+                    .padding(.vertical, 12)
             }
             Section("Notes") {
                 TextField("e.g. Fever of over 100 degrees", text: $symptom.notes, axis: .vertical)
@@ -37,19 +38,22 @@ struct NewSymptomView: View {
                     .lineLimit(4)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, minHeight: 200, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(.vertical, 12)
             }
             
             Button("Save", systemImage: "checkmark") {
                 showDrawer = false
             }
+            .padding(.vertical, 12)
             
             Button("Delete", systemImage: "trash", role: .destructive) {
                 removeSymptom(symptom)
                 showDrawer = false
             }
+            .padding(.vertical, 12)
             .foregroundColor(.red)
         }
-        .listStyle(.grouped)
+        .listStyle(.insetGrouped)
     }
 }
 

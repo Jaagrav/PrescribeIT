@@ -8,14 +8,19 @@
 import SwiftUI
 
 struct FloatingActionButtons: View {
-    @State var showDrawer = false
+    @State var showNewPrescriptionDrawer = false
+    @State var showCallListDrawer = false
     var appState = AppState.shared
     var notificationManager = NotificationManager.shared
     @State var showLogoutConfirmation: Bool = false
     var showNewPrescriptionButton: Bool = true
     
-    func createNewPrescription () {
-        showDrawer = true
+    func openDrawer () {
+        if showNewPrescriptionButton {
+            showNewPrescriptionDrawer = true
+        } else {
+            showCallListDrawer = true
+        }
     }
     
     var body: some View {
@@ -31,27 +36,31 @@ struct FloatingActionButtons: View {
                             Image(systemName: "iphone.and.arrow.forward.outward")
                                 .font(.title3)
                         }
-                        .padding(16)
+                        .frame(width: 45, height: 45)
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(120)
                     }
+                    .buttonStyle(.plain)
                     
-                    if showNewPrescriptionButton {
-                        Button(action: createNewPrescription) {
-                            Image(systemName: "plus")
-                                .font(.title)
-                                .padding(18)
-                                .foregroundColor(.white)
-                                .background(Color.accentColor)
-                                .cornerRadius(100)
-                        }
+                    Button(action: openDrawer) {
+                        Image(systemName: showNewPrescriptionButton ? "plus" : "phone.fill")
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .frame(width: 60, height: 60)
+                            .background(Color.accentColor)
+                            .cornerRadius(100)
                     }
+                    .buttonStyle(.plain)
                 }
             }
-            .padding(.trailing, 24)
+            .padding(.trailing, UIDevice.current.userInterfaceIdiom == .phone ? 24 : 12)
+            .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 24)
         }
-        .sheet(isPresented: $showDrawer) {
-            NewPrescriptionView(showDrawer: $showDrawer)
+        .sheet(isPresented: $showNewPrescriptionDrawer) {
+            NewPrescriptionView(showDrawer: $showNewPrescriptionDrawer)
+        }
+        .sheet(isPresented: $showCallListDrawer) {
+            CallListView()
         }
         .alert("You are about to log out. Are you sure?", isPresented: $showLogoutConfirmation) {
             Button("Cancel", role: .cancel) {

@@ -28,7 +28,7 @@ class MultipeerManager: NSObject, ObservableObject {
 
     init(user: User, userType: String) {
         self.myPeerID = MCPeerID(displayName: "\(user.firstName) \(user.lastName)")
-        self.session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
+        self.session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .none)
         self.advertiser = MCNearbyServiceAdvertiser(
             peer: myPeerID,
             discoveryInfo: ["userType": user.userType.rawValue, "age": user.age, "gender": user.gender.rawValue],

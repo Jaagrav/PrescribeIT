@@ -38,6 +38,7 @@ struct NewMedicineView: View {
                         .font(.title2)
                         .multilineTextAlignment(.trailing)
                 }
+                .padding(.vertical, 12)
                 HStack {
                     Text("Quantity")
                         .font(.callout)
@@ -46,10 +47,12 @@ struct NewMedicineView: View {
                         .font(.title2)
                         .multilineTextAlignment(.trailing)
                 }
+                .padding(.vertical, 12)
             }
             
             Section("Schedule") {
                 MedicineScheduleSetter(schedule: medicine.schedule)
+                    .padding(.vertical, 12)
             }
             
             Section("Notes") {
@@ -58,18 +61,21 @@ struct NewMedicineView: View {
                     .lineLimit(4)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, minHeight: 200, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(.vertical, 12)
             }
             
             Button("Save", systemImage: "checkmark") {
                 showDrawer = false
             }
+            .padding(.vertical, 12)
             
             Button("Delete", systemImage: "trash", role: .destructive) {
                 removeMedicine(medicine)
                 showDrawer = false
             }
             .foregroundColor(.red)
+            .padding(.vertical, 12)
         }
-        .listStyle(.grouped)
+        .listStyle(.insetGrouped)
     }
 }

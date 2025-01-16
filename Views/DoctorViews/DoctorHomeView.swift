@@ -68,6 +68,7 @@ struct DoctorHomeView: View {
                 
                 FloatingActionButtons()
             }
+            .background(Color(.systemBackground))
         }
     }
 }

@@ -18,7 +18,7 @@ struct FeatureBlock: View {
                     .foregroundColor(.accentColor)
                     .font(.title)
             }
-            .frame(width: 80, height: 80)
+            .frame(width: 80, height: 60)
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.callout)
@@ -34,7 +34,7 @@ struct FeatureBlock: View {
 
 struct OnboardingView: View {
     var body: some View {
-        VStack {
+        VStack(spacing: 32) {
             FeatureBlock(icon: "heart.text.square", title: "Create Prescriptions", description: "Doctors can quickly create, share, and manage prescriptions with an intuitive interface.")
             
             FeatureBlock(icon: "calendar.badge.clock", title: "Set Reminders", description: "Patients can easily set reminders on receiving prescriptions from their doctors.")

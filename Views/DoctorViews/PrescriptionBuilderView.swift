@@ -17,13 +17,14 @@ struct PrescriptionBuilderView: View {
                 TextField("e.g. Jaagrav Seal", text: $prescription.patientName)
                     .font(.largeTitle)
                     .fontWeight(.medium)
+                    .padding(.vertical, 12)
             }
             
             Section("General Information") {
                 HStack(spacing: 24) {
                     VStack(alignment: .leading) {
                         Text("Heart Rate (bpm)")
-                            .font(.subheadline)
+                            .font(.caption)
                         HStack {
                             TextField("90", text: $prescription.vitals.heartBpm)
                                 .keyboardType(.numberPad)
@@ -32,7 +33,7 @@ struct PrescriptionBuilderView: View {
                     }
                     VStack(alignment: .leading) {
                         Text("Blood Pressure (mmHg)")
-                            .font(.subheadline)
+                            .font(.caption)
                         HStack {
                             TextField("120", text: $prescription.vitals.bloodPressure[0])
                                 .keyboardType(.numberPad)
@@ -45,11 +46,12 @@ struct PrescriptionBuilderView: View {
                         }
                     }
                 }
+                .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 12)
                 
                 HStack(spacing: 24) {
                     VStack(alignment: .leading) {
                         Text("Age (years)")
-                            .font(.subheadline)
+                            .font(.caption)
                         HStack {
                             TextField("21", text: $prescription.vitals.age)
                                 .keyboardType(.numberPad)
@@ -58,7 +60,7 @@ struct PrescriptionBuilderView: View {
                     }
                     VStack(alignment: .leading) {
                         Text("Gender")
-                            .font(.subheadline)
+                            .font(.caption)
                         HStack {
                             Picker("Gender", selection: $prescription.vitals.gender) {
                                 Text("Male")
@@ -80,22 +82,26 @@ struct PrescriptionBuilderView: View {
                         .frame(maxWidth: .infinity)
                     }
                 }
+                .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 6 : 12)
             }
             
             Section("Chief Complaints") {
                 SymptomsList(symptoms: $prescription.symptoms)
+                    .padding(.vertical, 12)
             }
             
             Section("Suggested Medicines") {
                 MedicinesList(medicines: $prescription.medicines)
+                    .padding(.vertical, 12)
             }
             
             Button("Delete Patient", systemImage: "trash", role: .destructive) {
                 showDeletePrescription = true
             }
             .foregroundColor(.red)
+            .padding(.vertical, 12)
         }
-        .listStyle(.grouped)
+        .listStyle(.insetGrouped)
         .navigationTitle("Patient Details")
         .toolbar {
             NavigationLink {
@@ -104,8 +110,10 @@ struct PrescriptionBuilderView: View {
                 HStack {
                     Image(systemName: "square.and.arrow.up")
                         .fontWeight(.medium)
+                        .foregroundColor(.accentColor)
                 }
             }
+            .buttonStyle(.plain)
         }
         .alert("You are about to delete \(prescription.patientName)'s prescription", isPresented: $showDeletePrescription) {
             Button("Cancel", role: .cancel) {

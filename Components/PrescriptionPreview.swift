@@ -110,6 +110,8 @@ struct PrescriptionPreview: View {
                 }
             }
         }
+        .frame(maxWidth: 400)
+        .frame(minHeight: 500)
         .padding(8)
         .padding(withPadding ? 8 : 0)
     }
