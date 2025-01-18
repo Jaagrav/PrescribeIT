@@ -21,7 +21,25 @@ struct PatientsList: View {
                 .padding(.top, 24)
                 .padding(.bottom, 12)
             if sharedPrescriptions.prescriptions.isEmpty {
-                Text("No patient prescriptions yet")
+                VStack {
+                    VStack {
+                        Image("NoPatients")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 200)
+                            .padding(.top, 0)
+                            .padding(.bottom, 12)
+                        Text("No recent patients")
+                            .font(.title3)
+                        Text("Press on the bottom right plus button in order to add a new patient to create their prescription")
+                            .font(.caption)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: 300)
+                            .padding(.top, 4)
+                    }
+                    .opacity(0.6)
+                }
+                .frame(height: UIScreen.main.bounds.height / 2)
             }
             ForEach($sharedPrescriptions.prescriptions.filter({ $presc in
                 searchText.isEmpty || presc.patientName.lowercased().contains(searchText.lowercased())

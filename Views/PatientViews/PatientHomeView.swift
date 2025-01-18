@@ -9,15 +9,11 @@ import SwiftUI
 import AVFoundation
 import UIKit
 
-enum SplitViews {
-case savedPrescriptions, activePrescription
-}
-
 struct PatientHomeView: View {
     var sharedPrescriptions = Prescriptions.shared
     @State var searchText = ""
     @ObservedObject var appState = AppState.shared
-    @State var splitViews: SplitViews = .savedPrescriptions
+    @State var currentPage = 0
     @StateObject var mcManager = MultipeerManager(user: AppState.shared.user!, userType: "patient")
     
     var notificationManager = NotificationManager.shared
@@ -45,7 +41,7 @@ struct PatientHomeView: View {
         NavigationView {
             ZStack {
                 GradientAnimation()
-                ScrollView {
+                VStack {
                     Text(getGreetingMessage())
                         .opacity(0.6)
                         .padding(.top, 32)
@@ -55,47 +51,28 @@ struct PatientHomeView: View {
                         .bold()
                         .multilineTextAlignment(.center)
                     
-//                    HStack {
-//                        HStack {
-//                            Image(systemName: "magnifyingglass")
-//                            TextField(
-//                                "Search prescriptions",
-//                                text: $searchText
-//                            )
-//                        }
-//                        .padding(.all, 12)
-//                        .background(.background.opacity(0.5))
-//                        .cornerRadius(12)
-//                        .overlay(
-//                            RoundedRectangle(cornerRadius: 12)
-//                                .stroke(.background, lineWidth: 2)
-//                        )
-//                    }
-//                    .padding(.horizontal, 24)
-//                    .padding(.top, 24)
-//                    .padding(.bottom, -12)
-                    
-                    Picker("Split Views", selection: $splitViews) {
+                    Picker("Split Views", selection: $currentPage) {
                         Text("Saved Prescriptions")
-                            .tag(SplitViews.savedPrescriptions)
+                            .tag(0)
                             .padding()
                         Text("My Medicines")
-                            .tag(SplitViews.activePrescription)
+                            .tag(1)
                     }
                     .pickerStyle(.segmented)
                     .padding(24)
                     .padding(.bottom, 4)
                     
-                    switch splitViews {
-                    case .savedPrescriptions:
+                    TabView(selection: $currentPage) {
                         PrescriptionsList()
-                            .transition(.opacity)
-                    case .activePrescription:
+                            .tag(0)
+                        
                         ActivePrescription()
-                            .transition(.opacity)
+                            .tag(1)
                     }
+                    .tabViewStyle(PageTabViewStyle())
+                    .indexViewStyle(PageIndexViewStyle())
+                    .animation(.easeInOut, value: currentPage)
                 }
-                .animation(.easeInOut, value: splitViews)
                 .onChange(of: mcManager.receivedPrescription, perform: { newValue in
                     if mcManager.receivedPrescription != nil {
                         newPrescriptionReceived = true
@@ -136,12 +113,40 @@ struct PatientHomeView: View {
                 
                 FloatingActionButtons(showNewPrescriptionButton: false)
             }
+            .background(Color(.systemBackground))
             .onAppear {
                 mcManager.start()
                 notificationManager.requestPermission()
             }
             .onDisappear {
                 mcManager.stop()
+            }
+            
+            VStack {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Welcome to")
+                            .opacity(0.5)
+                        
+                        Text("PrescribeIT")
+                            .font(.system(size: 48))
+                            .fontWeight(.bold)
+                        
+                        Text("PrescribeIT is an app for both doctors and patients.")
+                        
+                        FeatureBlock(icon: "heart.text.square", title: "Create Prescriptions", description: "Doctors can quickly create, share, and manage prescriptions with an intuitive interface.")
+                        
+                        FeatureBlock(icon: "calendar.badge.clock", title: "Set Reminders at one click", description: "Patients can easily set reminders for all their medications at one click on receiving prescriptions from their doctors.")
+                        
+                        FeatureBlock(icon: "person.line.dotted.person.fill", title: "Share with patient offline", description: "Doctors can share prescriptions with their patients wirelessly without any internet connection or WiFi.")
+                        
+                        FeatureBlock(icon: "accessibility", title: "Clear and Readable Prescriptions", description: "Say goodbye to confusion with organized, easy-to-read digital prescriptions that can be saved as PDFs effortlessly.")
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 24)
+                .frame(maxWidth: 500)
             }
         }
     }

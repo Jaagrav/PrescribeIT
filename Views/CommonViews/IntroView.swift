@@ -138,6 +138,7 @@ struct IntroView: View {
                     .frame(maxWidth: 500)
                     .tag(1)
                 }
+                .frame(maxHeight: UIDevice.current.userInterfaceIdiom == .phone ? .infinity : 400)
                 .tabViewStyle(PageTabViewStyle())
                 .indexViewStyle(PageIndexViewStyle())
                 .animation(.easeInOut, value: currentPage)

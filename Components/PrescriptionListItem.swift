@@ -62,11 +62,9 @@ struct PrescriptionListItem: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color(.systemGray3), lineWidth: 1)
                 }
-                .padding(.horizontal, 24)
-                .padding(.trailing, -8)
-                
-                Divider()
+                .padding(.horizontal, 24) 
             }
         }
+        .buttonStyle(.plain)
     }
 }

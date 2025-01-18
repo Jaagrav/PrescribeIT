@@ -101,20 +101,22 @@ struct PrescriptionBuilderView: View {
             .foregroundColor(.red)
             .padding(.vertical, 12)
         }
-        .listStyle(.insetGrouped)
         .navigationTitle("Patient Details")
         .toolbar {
-            NavigationLink {
-                GeneratePrescriptionView(prescription: prescription)
-            } label: {
-                HStack {
-                    Image(systemName: "square.and.arrow.up")
-                        .fontWeight(.medium)
-                        .foregroundColor(.accentColor)
+            ToolbarItem(id: UUID().uuidString, placement: .topBarTrailing, showsByDefault: true) {
+                NavigationLink {
+                    GeneratePrescriptionView(prescription: prescription)
+                } label: {
+                    HStack {
+                        Image(systemName: "square.and.arrow.up")
+                            .fontWeight(.medium)
+                            .foregroundColor(.accentColor)
+                    }
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
+        .listStyle(.insetGrouped)
         .alert("You are about to delete \(prescription.patientName)'s prescription", isPresented: $showDeletePrescription) {
             Button("Cancel", role: .cancel) {
                 showDeletePrescription = false

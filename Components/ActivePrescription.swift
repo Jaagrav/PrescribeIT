@@ -13,7 +13,7 @@ struct ActivePrescription: View {
     @State var activePrescription: Prescription? = nil
     
     var body: some View {
-        VStack {
+        ScrollView {
             if activePrescription != nil {
                 VStack(spacing: 24) {
                     ForEach(activePrescription?.medicines ?? []) { medicine in
@@ -53,17 +53,31 @@ struct ActivePrescription: View {
                         }
                         .padding(.horizontal, 24)
                     }
+                    .buttonStyle(.plain)
                 }
             }
             else {
                 VStack {
-                    Spacer()
-                    Text("No active prescription yet")
-                    Spacer()
+                    VStack {
+                        Image("NoPatients")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 200)
+                            .padding(.top, 0)
+                            .padding(.bottom, 12)
+                        Text("No active prescription")
+                            .font(.title3)
+                        Text("Your list of medicines for your active medicine prescription schedule will appear here")
+                            .font(.caption)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: 300)
+                            .padding(.top, 4)
+                    }
+                    .opacity(0.6)
                 }
+                .frame(height: UIScreen.main.bounds.height / 2)
             }
         }
-        .padding(.top, -12)
         .onAppear {
             activePrescription = notificationManager.getActivePrescriptionSynchronously(allPrescriptions: sharedPrescriptions.prescriptions)
         }

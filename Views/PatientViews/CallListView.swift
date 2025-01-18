@@ -14,14 +14,14 @@ struct DoctorListItem: View {
         Link(destination: URL(string: "tel:\(doctor.phoneNumber)")!) {
             HStack {
                 Image(systemName: "coat.fill")
-                    .resizable()
-                    .padding(6)
-                    .frame(maxWidth: 60, maxHeight: 60)
+                    .font(.title)
+                    .padding(2)
                 
                 VStack(alignment: .leading) {
                     Text("Dr \(doctor.fullName)")
                         .font(.title2)
                         .fontWeight(.semibold)
+                        .foregroundColor(.accentColor)
                     Text("\(doctor.speciality) • \(doctor.phoneNumber)")
                         .font(.footnote)
                         .foregroundColor(.secondary)
@@ -31,6 +31,7 @@ struct DoctorListItem: View {
                 
                 Image(systemName: "phone")
             }
+            .foregroundColor(.primary)
             .padding(.vertical, 12)
         }
     }
@@ -55,6 +56,7 @@ struct CallListItem: View {
                             Text(number)
                                 .font(.title2)
                                 .fontWeight(.semibold)
+                                .foregroundColor(.accentColor)
                             Text(title)
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
@@ -69,6 +71,8 @@ struct CallListItem: View {
                         Spacer()
                     }
                 }
+                .padding(.vertical, 12)
+                .foregroundColor(.primary)
                 Spacer()
                 Image(systemName: "phone")
             }
@@ -77,6 +81,7 @@ struct CallListItem: View {
 }
 
 struct CallListView: View {
+    @Binding var showDrawer: Bool
     var sharedPrescriptions = Prescriptions.shared
     
     func getDoctors() -> [Doctor] {
@@ -104,14 +109,23 @@ struct CallListView: View {
                 .font(.title)
                 .fontWeight(.bold)
             Spacer()
+            Button("Close", role: .destructive) {
+                showDrawer = false
+            }
+            .foregroundColor(.red)
+            .buttonStyle(.plain)
         }
         .padding(20)
         .padding(.bottom, -8)
         
-        Text("Find below a list of all known doctors and emergency services that you can reach out to for immediate help")
-            .font(.footnote)
-            .foregroundColor(.secondary)
-            .padding(.horizontal, 20)
+        HStack {
+            Text("Find below a list of all known doctors and emergency services that you can reach out to for immediate help")
+                .font(.footnote)
+                .foregroundColor(.secondary)
+                .padding(.horizontal, 20)
+                .multilineTextAlignment(.leading)
+            Spacer()
+        }
         
         List {
             if !getDoctors().isEmpty {
@@ -130,8 +144,4 @@ struct CallListView: View {
         }
         .listStyle(.insetGrouped)
     }
-}
-
-#Preview {
-    CallListView()
 }

@@ -27,7 +27,8 @@ struct GeneratePrescriptionView: View {
                 }
                 .padding(4)
                 .border(Color(.secondaryLabel))
-                .padding(4)
+                .padding(.horizontal, 2)
+                .padding(.vertical, 6)
                 .frame(maxWidth: .infinity)
             }
             

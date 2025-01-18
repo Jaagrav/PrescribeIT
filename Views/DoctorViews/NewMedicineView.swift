@@ -24,6 +24,8 @@ struct NewMedicineView: View {
             Button("Close", role: .destructive) {
                 showDrawer = false
             }
+            .foregroundColor(.red)
+            .buttonStyle(.plain)
         }
         .padding(20)
         .padding(.bottom, -8)

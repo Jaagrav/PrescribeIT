@@ -60,7 +60,7 @@ struct FloatingActionButtons: View {
             NewPrescriptionView(showDrawer: $showNewPrescriptionDrawer)
         }
         .sheet(isPresented: $showCallListDrawer) {
-            CallListView()
+            CallListView(showDrawer: $showCallListDrawer)
         }
         .alert("You are about to log out. Are you sure?", isPresented: $showLogoutConfirmation) {
             Button("Cancel", role: .cancel) {

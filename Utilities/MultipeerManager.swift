@@ -64,6 +64,7 @@ class MultipeerManager: NSObject, ObservableObject {
 extension MultipeerManager: MCSessionDelegate {
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         if let prescription = try? JSONDecoder().decode(Prescription.self, from: data) {
+            prescription.uid = UUID()
             self.receivedPrescription = prescription
             print("Received prescription from \(peerID.displayName)")
         }

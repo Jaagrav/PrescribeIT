@@ -29,7 +29,9 @@ let package = Package(
                 .portrait
             ],
             capabilities: [
-                .localNetwork(purposeString: "Allow to connect patient's and doctor's devices", bonjourServiceTypes: ["_prescribeit._tcp", "_prescribeit._udp"])
+                .localNetwork(purposeString: "Allow to connect patient's and doctor's devices", bonjourServiceTypes: ["_prescribeit._tcp", "_prescribeit._udp"]),
+                .incomingNetworkConnections(),
+                .outgoingNetworkConnections()
             ],
             appCategory: .medical
         )
