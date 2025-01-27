@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct PrescriptionListItem: View {
-    @ObservedObject var prescription: Prescription
+    @Binding var prescription: Prescription
     @StateObject var sharedPrescriptions = Prescriptions.shared
+    
+    @ObservedObject var sharedUser = AppState.shared
     
     var notificationManager = NotificationManager.shared
     @State var activePrescription: Prescription? = nil
@@ -17,7 +19,7 @@ struct PrescriptionListItem: View {
     var body: some View {
         VStack {
             NavigationLink(
-                destination: GeneratePrescriptionView(prescription: prescription)
+                destination: sharedUser.user?.userType == .doctor ? AnyView(PrescriptionBuilderView(prescription: $prescription)) : AnyView(GeneratePrescriptionView(prescription: prescription))
             ) {
                 HStack {
                     VStack(alignment: .leading) {
@@ -40,10 +42,10 @@ struct PrescriptionListItem: View {
                             }
                         }
                         
-                        Text("Dr \(prescription.doctor.fullName)")
+                        Text(sharedUser.user?.userType == .patient ? "Dr \(prescription.doctor.fullName)" : prescription.patientName)
                             .lineLimit(1)
-                        
-                        Text("\(prescription.doctor.speciality) • \(prescription.medicines.count) Medicines • \(prescription.symptoms.count) Symptoms")
+
+                        Text("\(sharedUser.user?.userType == .patient ? prescription.doctor.speciality : "\(prescription.vitals.age) years old • \(prescription.vitals.gender.rawValue)") • \(prescription.medicines.count) Medicines • \(prescription.symptoms.count) Symptoms")
                             .font(.caption)
                             .opacity(0.6)
                             .padding(.top, 0.25)

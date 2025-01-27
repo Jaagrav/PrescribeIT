@@ -34,7 +34,7 @@ struct DoctorHomeView: View {
             ZStack {
                 GradientAnimation()
                 
-                ScrollView {
+                VStack(spacing: 0) {
                     Text(getGreetingMessage())
                         .opacity(0.6)
                         .padding(.top, 32)
@@ -51,6 +51,7 @@ struct DoctorHomeView: View {
                                 "Search patient",
                                 text: $searchText
                             )
+                            .submitLabel(.done)
                         }
                         .padding(.all, 12)
                         .background(.background.opacity(0.6))

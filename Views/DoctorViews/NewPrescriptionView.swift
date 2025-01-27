@@ -133,6 +133,7 @@ struct NewPrescriptionView: View {
             }
             .buttonStyle(.plain)
             .padding(.bottom, 24)
+            .disabled(patientName.isEmpty || heartRate.isEmpty || bloodPressure.isEmpty || age.isEmpty)
         }
     }
 }

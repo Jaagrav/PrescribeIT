@@ -47,13 +47,13 @@ struct MedicineScheduleSetter: View {
                     ForEach(days, id: \.self) { day in
                         HStack {
                             Text(day)
-                                .font(.caption2)
+                                .font(.caption)
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity)
                         .foregroundColor(schedule.days.contains(day) ? Color(uiColor: .systemBackground) : Color.primary)
                         .background(
-                            schedule.days.contains(day) ? Color.accentColor : Color(uiColor: .tertiarySystemBackground)
+                            schedule.days.contains(day) ? Color.accentColor : Color(uiColor: .tertiarySystemFill)
                         )
                         .cornerRadius(12)
                         .onTapGesture {
@@ -81,28 +81,30 @@ struct MedicineScheduleSetter: View {
                     Spacer()
                 }
                 HStack {
-                    ForEach(dayParts, id: \.self) { dayPart in
-                        HStack {
-                            Text(dayPart)
-                                .font(.caption2)
-                        }
-                        .padding(12)
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(schedule.daypart.contains(dayPart) ? Color(uiColor: .systemBackground) : Color.primary)
-                        .background(
-                            schedule.daypart.contains(dayPart) ? Color.accentColor : Color(uiColor: .tertiarySystemBackground)
-                        )
-                        .cornerRadius(12)
-                        .onTapGesture {
-                            if schedule.daypart.contains(dayPart) {
-                                for (index, i) in schedule.daypart.enumerated() {
-                                    if i == dayPart {
-                                        schedule.daypart.remove(at: index)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))], spacing: 10) {
+                        ForEach(dayParts, id: \.self) { dayPart in
+                            HStack {
+                                Text(dayPart)
+                                    .font(.caption)
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(schedule.daypart.contains(dayPart) ? Color(uiColor: .systemBackground) : Color.primary)
+                            .background(
+                                schedule.daypart.contains(dayPart) ? Color.accentColor : Color(uiColor: .tertiarySystemFill)
+                            )
+                            .cornerRadius(12)
+                            .onTapGesture {
+                                if schedule.daypart.contains(dayPart) {
+                                    for (index, i) in schedule.daypart.enumerated() {
+                                        if i == dayPart {
+                                            schedule.daypart.remove(at: index)
+                                        }
                                     }
                                 }
-                            }
-                            else {
-                                schedule.daypart.append(dayPart)
+                                else {
+                                    schedule.daypart.append(dayPart)
+                                }
                             }
                         }
                     }

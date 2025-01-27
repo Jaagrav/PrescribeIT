@@ -33,10 +33,11 @@ struct PrescriptionsList: View {
                     }
                     .frame(height: UIScreen.main.bounds.height / 2)
                 }
-                ForEach(sharedPrescriptions.prescriptions) { prescription in
-                    PrescriptionListItem(prescription: prescription)
+                ForEach($sharedPrescriptions.prescriptions) { $prescription in
+                    PrescriptionListItem(prescription: $prescription)
                 }
             }
+            .padding(.top, 24)
         }
     }
 }

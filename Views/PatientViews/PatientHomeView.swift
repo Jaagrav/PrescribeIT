@@ -41,10 +41,10 @@ struct PatientHomeView: View {
         NavigationView {
             ZStack {
                 GradientAnimation()
-                VStack {
+                VStack(spacing: 0) {
                     Text(getGreetingMessage())
                         .opacity(0.6)
-                        .padding(.top, 32)
+                        .padding(.top, 34)
                     
                     Text("\(appState.user!.firstName) \(appState.user!.lastName)")
                         .font(.largeTitle)
@@ -59,8 +59,8 @@ struct PatientHomeView: View {
                             .tag(1)
                     }
                     .pickerStyle(.segmented)
-                    .padding(24)
-                    .padding(.bottom, 4)
+                    .padding(.top, 26)
+                    .padding(.horizontal, 24)
                     
                     TabView(selection: $currentPage) {
                         PrescriptionsList()
@@ -69,9 +69,9 @@ struct PatientHomeView: View {
                         ActivePrescription()
                             .tag(1)
                     }
-                    .tabViewStyle(PageTabViewStyle())
-                    .indexViewStyle(PageIndexViewStyle())
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .animation(.easeInOut, value: currentPage)
+                    .ignoresSafeArea()
                 }
                 .onChange(of: mcManager.receivedPrescription, perform: { newValue in
                     if mcManager.receivedPrescription != nil {

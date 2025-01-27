@@ -31,7 +31,6 @@ struct DoctorListItem: View {
                 
                 Image(systemName: "phone")
             }
-            .foregroundColor(.primary)
             .padding(.vertical, 12)
         }
     }

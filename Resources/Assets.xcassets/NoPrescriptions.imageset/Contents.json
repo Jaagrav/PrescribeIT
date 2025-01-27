@@ -1,6 +1,16 @@
 {
   "images" : [
     {
+      "filename" : "undraw_signal-searching_yod3 2.svg",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
       "filename" : "undraw_signal-searching_yod3 1.svg",
       "idiom" : "universal"
     }
