@@ -14,6 +14,7 @@ struct FloatingActionButtons: View {
     var notificationManager = NotificationManager.shared
     @State var showLogoutConfirmation: Bool = false
     var showNewPrescriptionButton: Bool = true
+    @Binding var path: NavigationPath
     
     func openDrawer () {
         if showNewPrescriptionButton {
@@ -57,7 +58,7 @@ struct FloatingActionButtons: View {
             .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 24)
         }
         .sheet(isPresented: $showNewPrescriptionDrawer) {
-            NewPrescriptionView(showDrawer: $showNewPrescriptionDrawer)
+            NewPrescriptionView(showDrawer: $showNewPrescriptionDrawer, path: $path)
         }
         .sheet(isPresented: $showCallListDrawer) {
             CallListView(showDrawer: $showCallListDrawer)
@@ -72,8 +73,4 @@ struct FloatingActionButtons: View {
             }
         }
     }
-}
-
-#Preview {
-    FloatingActionButtons()
 }

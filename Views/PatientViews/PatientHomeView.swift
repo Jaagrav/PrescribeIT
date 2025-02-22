@@ -9,16 +9,11 @@ import SwiftUI
 import AVFoundation
 import UIKit
 
-struct PatientHomeView: View {
-    var sharedPrescriptions = Prescriptions.shared
-    @State var searchText = ""
-    @ObservedObject var appState = AppState.shared
+struct PatientSidebar: View {
     @State var currentPage = 0
-    @StateObject var mcManager = MultipeerManager(user: AppState.shared.user!, userType: "patient")
-    
-    var notificationManager = NotificationManager.shared
-    
-    @State var newPrescriptionReceived: Bool = false
+    @ObservedObject var appState = AppState.shared
+    @Binding var path: NavigationPath
+    var namespace: Namespace.ID
     
     func getGreetingMessage() -> String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -38,40 +33,68 @@ struct PatientHomeView: View {
     }
     
     var body: some View {
-        NavigationView {
+        GradientAnimation()
+        
+        VStack(spacing: 0) {
+            Text(getGreetingMessage())
+                .opacity(0.6)
+                .padding(.top, 34)
+            
+            Text("\(appState.user!.firstName) \(appState.user!.lastName)")
+                .font(.largeTitle)
+                .bold()
+                .multilineTextAlignment(.center)
+            
+            Picker("Split Views", selection: $currentPage) {
+                Text("Saved Prescriptions")
+                    .tag(0)
+                    .padding()
+                Text("My Medicines")
+                    .tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding(.top, 26)
+            .padding(.horizontal, 24)
+            
+            TabView(selection: $currentPage) {
+                PrescriptionsList(path: $path, namespace: namespace)
+                    .tag(0)
+                
+                ActivePrescription(path: $path)
+                    .tag(1)
+            }
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .animation(.easeInOut, value: currentPage)
+        }
+        
+        FloatingActionButtons(showNewPrescriptionButton: false, path: $path)
+    }
+}
+
+struct PatientHomeView: View {
+    @StateObject var sharedPrescriptions = Prescriptions.shared
+    @StateObject var mcManager = MultipeerManager(user: AppState.shared.user!, userType: "patient")
+    
+    var notificationManager = NotificationManager.shared
+    
+    @State var newPrescriptionReceived: Bool = false
+    
+    @State var path = NavigationPath()
+    
+    @Namespace var namespace
+    
+    var body: some View {
+        RootNavView {
             ZStack {
-                GradientAnimation()
-                VStack(spacing: 0) {
-                    Text(getGreetingMessage())
-                        .opacity(0.6)
-                        .padding(.top, 34)
-                    
-                    Text("\(appState.user!.firstName) \(appState.user!.lastName)")
-                        .font(.largeTitle)
-                        .bold()
-                        .multilineTextAlignment(.center)
-                    
-                    Picker("Split Views", selection: $currentPage) {
-                        Text("Saved Prescriptions")
-                            .tag(0)
-                            .padding()
-                        Text("My Medicines")
-                            .tag(1)
+                PatientSidebar(path: $path, namespace: namespace)
+            }
+            .background(Color(UIColor.systemBackground))
+        } detail: {
+            NavigationStack(path: $path) {
+                ZStack {
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        PatientSidebar(path: $path, namespace: namespace)
                     }
-                    .pickerStyle(.segmented)
-                    .padding(.top, 26)
-                    .padding(.horizontal, 24)
-                    
-                    TabView(selection: $currentPage) {
-                        PrescriptionsList()
-                            .tag(0)
-                        
-                        ActivePrescription()
-                            .tag(1)
-                    }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    .animation(.easeInOut, value: currentPage)
-                    .ignoresSafeArea()
                 }
                 .onChange(of: mcManager.receivedPrescription, perform: { newValue in
                     if mcManager.receivedPrescription != nil {
@@ -106,47 +129,33 @@ struct PatientHomeView: View {
                                 .padding(.horizontal, 16)
                                 .font(.caption)
                                 .opacity(0.6)
-                            GeneratePrescriptionView(prescription: mcManager.receivedPrescription!)
+                            GeneratePrescriptionView(prescription: mcManager.receivedPrescription!, path: $path)
                         }
                     }
                 }
-                
-                FloatingActionButtons(showNewPrescriptionButton: false)
+                .navigationDestination(for: String.self) { value in
+                    ForEach(sharedPrescriptions.prescriptions) { prescription in
+                        if prescription.uid.uuidString == value {
+                            if #available(iOS 18, *) {
+                                VStack {
+                                    GeneratePrescriptionView(prescription: prescription, path: $path)
+                                        .toolbar(.hidden)
+                                }
+                                .navigationTransition(.zoom(sourceID: "prescription-\(prescription.uid)", in: namespace))
+                            } else {
+                                GeneratePrescriptionView(prescription: prescription, path: $path)
+                                    .navigationBarBackButtonHidden()
+                            }
+                        }
+                    }
+                }
             }
             .background(Color(.systemBackground))
             .onAppear {
                 mcManager.start()
-                notificationManager.requestPermission()
             }
             .onDisappear {
                 mcManager.stop()
-            }
-            
-            VStack {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Welcome to")
-                            .opacity(0.5)
-                        
-                        Text("PrescribeIT")
-                            .font(.system(size: 48))
-                            .fontWeight(.bold)
-                        
-                        Text("PrescribeIT is an app for both doctors and patients.")
-                        
-                        FeatureBlock(icon: "heart.text.square", title: "Create Prescriptions", description: "Doctors can quickly create, share, and manage prescriptions with an intuitive interface.")
-                        
-                        FeatureBlock(icon: "calendar.badge.clock", title: "Set Reminders at one click", description: "Patients can easily set reminders for all their medications at one click on receiving prescriptions from their doctors.")
-                        
-                        FeatureBlock(icon: "person.line.dotted.person.fill", title: "Share with patient offline", description: "Doctors can share prescriptions with their patients wirelessly without any internet connection or WiFi.")
-                        
-                        FeatureBlock(icon: "accessibility", title: "Clear and Readable Prescriptions", description: "Say goodbye to confusion with organized, easy-to-read digital prescriptions that can be saved as PDFs effortlessly.")
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 24)
-                .frame(maxWidth: 500)
             }
         }
     }

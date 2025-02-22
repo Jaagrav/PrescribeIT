@@ -9,6 +9,9 @@ import SwiftUI
 
 struct PrescriptionsList: View {
     @ObservedObject var sharedPrescriptions = Prescriptions.shared
+    @Binding var path: NavigationPath
+    var namespace: Namespace.ID
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 22) {
@@ -34,7 +37,7 @@ struct PrescriptionsList: View {
                     .frame(height: UIScreen.main.bounds.height / 2)
                 }
                 ForEach($sharedPrescriptions.prescriptions) { $prescription in
-                    PrescriptionListItem(prescription: $prescription)
+                    PrescriptionListItem(prescription: $prescription, path: $path, namespace: namespace)
                 }
             }
             .padding(.top, 24)

@@ -127,12 +127,14 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
-    func requestPermission() {
+    func requestPermission(callback: @escaping @MainActor () -> Void) -> Void {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error {
-                print("Error requesting notification permissions: \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Error requesting notification permissions: \(error.localizedDescription)")
+                }
+                callback()
             }
-            print("Notification request granted")
         }
     }
     

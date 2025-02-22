@@ -11,6 +11,7 @@ struct ActivePrescription: View {
     @StateObject var sharedPrescriptions = Prescriptions.shared
     var notificationManager = NotificationManager.shared
     @State var activePrescription: Prescription? = nil
+    @Binding var path: NavigationPath
     
     var body: some View {
         ScrollView {
@@ -45,7 +46,7 @@ struct ActivePrescription: View {
                         }
                         
                         NavigationLink {
-                            GeneratePrescriptionView(prescription: activePrescription!)
+                            GeneratePrescriptionView(prescription: activePrescription!, path: $path)
                         } label: {
                             HStack {
                                 Text("See full prescription")
@@ -88,5 +89,6 @@ struct ActivePrescription: View {
 }
 
 #Preview {
-    ActivePrescription()
+    @State var path = NavigationPath()
+    ActivePrescription(path: $path)
 }

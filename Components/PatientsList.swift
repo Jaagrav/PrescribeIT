@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct PatientsList: View {
-    @ObservedObject var sharedPrescriptions = Prescriptions.shared
+    @StateObject var sharedPrescriptions = Prescriptions.shared
     
     var searchText: String
+    @Binding var path: NavigationPath
+    
+    var namespace: Namespace.ID
     
     var body: some View {
         ScrollView {
@@ -29,9 +32,9 @@ struct PatientsList: View {
                                 .frame(maxWidth: 200)
                                 .padding(.top, 0)
                                 .padding(.bottom, 12)
-                            Text("No recent patients")
+                            Text("No saved prescription")
                                 .font(.title3)
-                            Text("Press on the bottom right plus button in order to add a new patient to create their prescription")
+                            Text("Press on the bottom right plus button in order to create a new prescription")
                                 .font(.caption)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: 300)
@@ -45,7 +48,7 @@ struct PatientsList: View {
                     searchText.isEmpty || presc.patientName.lowercased().contains(searchText.lowercased())
                 })) { $prescription in
                     //                PatientListItem(prescription: $prescription)
-                    PrescriptionListItem(prescription: $prescription)
+                    PrescriptionListItem(prescription: $prescription, path: $path, namespace: namespace)
                 }
             }
         }

@@ -19,16 +19,20 @@ struct NewPrescriptionView: View {
     @State var age: String = ""
     @State var gender: Gender = .male
     
+    @Binding var path: NavigationPath
+    
     func createNewPrescription() {
-        let prescription = Prescription(patientName: patientName, doctor: Doctor(fullName: "\(appState.user?.firstName ?? "") \(appState.user?.lastName ?? "")", phoneNumber: appState.user?.phoneNumber ?? "", speciality: appState.user?.speciality ?? ""), vitals: Vitals(heartBpm: heartRate, bloodPressure: bloodPressure, age: age, tempInF: "", gender: gender), symptoms: [], medicines: [])
+        let prescription = Prescription(patientName: patientName, doctor: Doctor(fullName: "\(appState.user?.firstName ?? "") \(appState.user?.lastName ?? "")", phoneNumber: appState.user?.phoneNumber ?? "", speciality: appState.user?.speciality ?? ""), vitals: Vitals(heartBpm: heartRate, bloodPressure: bloodPressure, age: age, tempInF: "", gender: gender), symptoms: [], medicines: [], isSample: false)
         
         sharedPrescriptions.createPrescription(prescription: prescription)
+        
+        path.append(prescription.uid.uuidString)
     }
     
     var body: some View {
         VStack(spacing: 24) {
             HStack {
-                Text("New Patient")
+                Text("New Prescription")
                     .font(.title)
                     .fontWeight(.bold)
                 Spacer()
@@ -136,9 +140,4 @@ struct NewPrescriptionView: View {
             .disabled(patientName.isEmpty || heartRate.isEmpty || bloodPressure.isEmpty || age.isEmpty)
         }
     }
-}
-
-#Preview {
-    @State var showDrawer = false
-    NewPrescriptionView(showDrawer: $showDrawer)
 }

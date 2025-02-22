@@ -16,7 +16,7 @@ let package = Package(
         .iOSApplication(
             name: "PrescribeIT",
             targets: ["AppModule"],
-            bundleIdentifier: "com.jaagrav.PrescribeIT",
+            bundleIdentifier: "com.jaagrav.PrescribeITApp",
             teamIdentifier: "89659343H8",
             displayVersion: "1.0",
             bundleVersion: "1",

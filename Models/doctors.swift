@@ -223,8 +223,9 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
     @Published var medicines: [Medicine]
 
     var uid: UUID
+    var isSample: Bool?
 
-    init(patientName: String, doctor: Doctor, vitals: Vitals, symptoms: [Symptom], medicines: [Medicine]) {
+    init(patientName: String, doctor: Doctor, vitals: Vitals, symptoms: [Symptom], medicines: [Medicine], isSample: Bool?) {
         self.patientName = patientName
         self.createdAt = Date.now
         self.uid = UUID()
@@ -232,6 +233,7 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
         self.symptoms = symptoms
         self.medicines = medicines
         self.doctor = doctor
+        self.isSample = isSample
     }
     
     init(uid: UUID, patientName: String, doctor: Doctor, createdAt: Date, vitals: Vitals, symptoms: [Symptom], medicines: [Medicine]) {
@@ -242,10 +244,11 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
         self.vitals = vitals
         self.symptoms = symptoms
         self.medicines = medicines
+        self.isSample = false
     }
 
     enum CodingKeys: String, CodingKey {
-        case patientName, doctor, vitals, createdAt, symptoms, medicines, uid
+        case patientName, doctor, vitals, createdAt, symptoms, medicines, uid, isSample
     }
 
     required init(from decoder: Decoder) throws {
@@ -257,6 +260,7 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
         symptoms = try container.decode([Symptom].self, forKey: .symptoms)
         medicines = try container.decode([Medicine].self, forKey: .medicines)
         uid = try container.decode(UUID.self, forKey: .uid)
+        isSample = try container.decode(Bool.self, forKey: .isSample)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -268,6 +272,7 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
         try container.encode(symptoms, forKey: .symptoms)
         try container.encode(medicines, forKey: .medicines)
         try container.encode(uid, forKey: .uid)
+        try container.encode(isSample, forKey: .isSample)
     }
     
     static func == (lhs: Prescription, rhs: Prescription) -> Bool {
@@ -275,12 +280,48 @@ class Prescription: ObservableObject, Identifiable, Codable, Equatable {
                 lhs.patientName == rhs.patientName &&
                 lhs.createdAt == rhs.createdAt &&
                 lhs.symptoms == rhs.symptoms &&
-                lhs.medicines == rhs.medicines
+                lhs.medicines == rhs.medicines &&
+                lhs.isSample == rhs.isSample
     }
 }
 
 class Prescriptions: ObservableObject {
     @MainActor static let shared = Prescriptions()
+    
+    private var samplePrescriptions = [
+        Prescription(
+            patientName: "Jaagrav Seal",
+            doctor: Doctor(fullName: "Sushan Mukhopadhyay", phoneNumber: "0123456789", speciality: "Cardiologist"),
+            vitals: Vitals(heartBpm: "92", bloodPressure: ["120", "80"], age: "21", tempInF: "98", gender: .male),
+            symptoms: [
+                Symptom(description: "Common cold", notes: "With runny nose and cough"),
+                Symptom(description: "Mild fever", notes: ""),
+            ],
+            medicines: [
+                    Medicine(schedule: MedicineSchedule(daypart: ["Afternoon", "Night"], days: ["Monday"], isSOS: true), name: "Paracetamol", quantity: "650mg", notes: "Take in case fever crosses 102 fahrenheitz"),
+                    Medicine(schedule: MedicineSchedule(daypart: ["Night"], days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], isSOS: false), name: "Cough Syrup", quantity: "2ml", notes: "Every night before sleeping"),
+            ],
+            isSample: true
+        ),
+        Prescription(
+            patientName: "Debra Morgan",
+            doctor: Doctor(fullName: "Jeffrey Norton", phoneNumber: "9008007001", speciality: "Oncologist"),
+            vitals: Vitals(heartBpm: "92", bloodPressure: ["120", "80"], age: "56", tempInF: "98", gender: .female),
+            symptoms: [
+                Symptom(description: "Fatigue", notes: "Persistent tiredness, worsened by activity"),
+                Symptom(description: "Unexplained Weight Loss", notes: "Lost 10 lbs in the last two months without dietary changes"),
+                Symptom(description: "Nausea and Vomiting", notes: "Frequent nausea post-chemotherapy"),
+                Symptom(description: "Pain", notes: "Mild to moderate pain in lower back and abdomen"),
+            ],
+            medicines: [
+                Medicine(schedule: MedicineSchedule(daypart: ["Morning", "Afternoon"], days: ["Monday", "Wednesday", "Friday"], isSOS: false), name: "Ondansetron", quantity: "8mg", notes: "To be taken 30 minutes before meals to prevent nausea"),
+                Medicine(schedule: MedicineSchedule(daypart: ["Morning"], days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], isSOS: false), name: "Dexamethasone", quantity: "4mg", notes: "Reduces inflammation and side effects of chemotherapy"),
+                Medicine(schedule: MedicineSchedule(daypart: ["Afternoon", "Night"], days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], isSOS: true), name: "Morphine", quantity: "10mg", notes: "Take only if pain is severe"),
+                Medicine(schedule: MedicineSchedule(daypart: ["Night"], days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], isSOS: false), name: "Gabapentin", quantity: "300mg", notes: "For nerve pain management"),
+            ],
+            isSample: true
+        )
+    ]
     
     @Published var prescriptions: [Prescription] = [] {
         didSet {
@@ -290,7 +331,8 @@ class Prescriptions: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    private init() {
+    init() {
+        print("Load prescriptions from user defaults")
         loadFromUserDefaults()
     }
     
@@ -321,10 +363,18 @@ class Prescriptions: ObservableObject {
     }
     
     private func loadFromUserDefaults() {
-        guard let data = UserDefaults.standard.data(forKey: "prescriptions") else { return }
+        guard let data = UserDefaults.standard.data(forKey: "prescriptions") else {
+            self.prescriptions = samplePrescriptions
+            return
+        }
         do {
             let loadedPrescriptions = try JSONDecoder().decode([Prescription].self, from: data)
-            self.prescriptions = loadedPrescriptions
+            if loadedPrescriptions.isEmpty {
+                self.prescriptions = samplePrescriptions
+            }
+            else {
+                self.prescriptions = loadedPrescriptions
+            }
         } catch {
             print("Failed to load prescriptions from UserDefaults: \(error)")
         }
