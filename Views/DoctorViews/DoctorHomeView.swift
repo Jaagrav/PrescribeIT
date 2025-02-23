@@ -100,7 +100,7 @@ struct DoctorHomeView: View {
                             }
                         }
                     }
-                    .navigationBarBackButtonHidden()
+                    .toolbar(UIDevice.current.userInterfaceIdiom != .phone ? .automatic : .hidden)
                 }
                 .background(Color(.systemBackground))
             }

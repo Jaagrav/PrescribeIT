@@ -103,9 +103,7 @@ struct PrescriptionListItem: View {
             }
         }
         .onTapGesture {
-            if path.count == 0 {
-                path.append(prescription.uid.uuidString)
-            }
+            path.append(prescription.uid.uuidString)
         }
         .onAppear {
             activePrescription = notificationManager.getActivePrescriptionSynchronously(allPrescriptions: sharedPrescriptions.prescriptions)

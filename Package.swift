@@ -23,10 +23,15 @@ let package = Package(
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.brown),
             supportedDeviceFamilies: [
-                .phone
+                .phone,
+                .pad,
+                .mac
             ],
             supportedInterfaceOrientations: [
-                .portrait
+                .portrait,
+                .landscapeRight,
+                .landscapeLeft,
+                .portraitUpsideDown(.when(deviceFamilies: [.pad]))
             ],
             capabilities: [
                 .localNetwork(purposeString: "Allow to connect patient's and doctor's devices", bonjourServiceTypes: ["_prescribeit._tcp", "_prescribeit._udp"]),

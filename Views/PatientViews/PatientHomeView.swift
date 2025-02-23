@@ -144,7 +144,7 @@ struct PatientHomeView: View {
                                 .navigationTransition(.zoom(sourceID: "prescription-\(prescription.uid)", in: namespace))
                             } else {
                                 GeneratePrescriptionView(prescription: prescription, path: $path)
-                                    .navigationBarBackButtonHidden()
+                                    .toolbar(.hidden)
                             }
                         }
                     }
@@ -153,9 +153,6 @@ struct PatientHomeView: View {
             .background(Color(.systemBackground))
             .onAppear {
                 mcManager.start()
-            }
-            .onDisappear {
-                mcManager.stop()
             }
         }
     }
