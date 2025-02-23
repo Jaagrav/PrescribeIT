@@ -129,7 +129,7 @@ struct PatientHomeView: View {
                                 .padding(.horizontal, 16)
                                 .font(.caption)
                                 .opacity(0.6)
-                            GeneratePrescriptionView(prescription: mcManager.receivedPrescription!, path: $path)
+                            GeneratePrescriptionView(prescription: mcManager.receivedPrescription!, path: $path, receivedPrescription: true)
                         }
                     }
                 }

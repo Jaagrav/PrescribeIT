@@ -19,15 +19,18 @@ struct NearbyPatientsList: View {
     var body: some View {
         Section("Share with Nearby Patients") {
             if mcManager.discoveredPeers.isEmpty {
-                HStack {
-                    Spacer()
-                    Image("MultipeerConnectivitySharing")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: 200)
-                        .padding(.top, 0)
-                        .padding(.bottom, 12)
-                    Spacer()
+                VStack {
+                    HStack {
+                        Spacer()
+                        Image("MultipeerConnectivitySharing")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 200)
+                            .padding(.top, 0)
+                            .padding(.bottom, 12)
+                        Spacer()
+                    }
+                    NetworkIssuesHelper()
                 }
             } else {
                 ForEach(mcManager.discoveredPeers, id: \.self) { peer in

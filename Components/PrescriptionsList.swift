@@ -39,6 +39,7 @@ struct PrescriptionsList: View {
                 ForEach($sharedPrescriptions.prescriptions) { $prescription in
                     PrescriptionListItem(prescription: $prescription, path: $path, namespace: namespace)
                 }
+                NetworkIssuesHelper()
             }
             .padding(.top, 24)
         }

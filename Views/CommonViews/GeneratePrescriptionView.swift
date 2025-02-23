@@ -18,7 +18,7 @@ struct GeneratePrescriptionView: View {
     @State var showDeletePrescription: Bool = false
     @State var activePrescription: Prescription? = nil
     
-    
+    var receivedPrescription: Bool?
     var notificationManager = NotificationManager.shared
     
     func setReminders() -> Void {
@@ -103,11 +103,13 @@ struct GeneratePrescriptionView: View {
                         }
                     }
                     
-                    Button("Delete Prescription", systemImage: "trash", role: .destructive) {
-                        showDeletePrescription = true
+                    if receivedPrescription != true {
+                        Button("Delete Prescription", systemImage: "trash", role: .destructive) {
+                            showDeletePrescription = true
+                        }
+                        .foregroundColor(.red)
+                        .padding(.vertical, 12)
                     }
-                    .foregroundColor(.red)
-                    .padding(.vertical, 12)
                 }
             }
             .onAppear {
