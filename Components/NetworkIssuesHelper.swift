@@ -41,12 +41,12 @@ struct NetworkIssuesHelper: View {
             } label: {
                 HStack {
                     Image(systemName: "info.circle")
-                    Text("Facing trouble connecting?")
+                    Text("Facing issues?")
                 }
             }
         }.sheet(isPresented: $isOpen) {
             VStack(alignment: .leading) {
-                Text("Troubleshoot network issues")
+                Text("Troubleshooting")
                     .font(.largeTitle)
                     .fontWeight(.heavy)
                 

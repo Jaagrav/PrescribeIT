@@ -31,15 +31,19 @@ struct PrescriptionsList: View {
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: 300)
                                 .padding(.top, 4)
+                            NetworkIssuesHelper()
+                                .padding(.top, 24)
                         }
                         .opacity(0.6)
                     }
                     .frame(height: UIScreen.main.bounds.height / 2)
                 }
-                ForEach($sharedPrescriptions.prescriptions) { $prescription in
-                    PrescriptionListItem(prescription: $prescription, path: $path, namespace: namespace)
+                else {
+                    ForEach($sharedPrescriptions.prescriptions) { $prescription in
+                        PrescriptionListItem(prescription: $prescription, path: $path, namespace: namespace)
+                    }
+                    NetworkIssuesHelper()
                 }
-                NetworkIssuesHelper()
             }
             .padding(.top, 24)
         }
