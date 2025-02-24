@@ -22,7 +22,17 @@ enum Gender: String, CaseIterable, Identifiable, Codable {
     var id: Self { self }
 }
 
-class User: ObservableObject, Codable {
+class User: ObservableObject, Codable, Equatable {
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.userType == rhs.userType &&
+        lhs.firstName == rhs.firstName &&
+        lhs.lastName == rhs.lastName &&
+        lhs.age == rhs.age &&
+        lhs.gender == rhs.gender &&
+        lhs.phoneNumber == rhs.phoneNumber &&
+        lhs.speciality == rhs.speciality
+    }
+    
     @Published var firstName: String
     @Published var lastName: String
     @Published var phoneNumber: String

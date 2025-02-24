@@ -7,7 +7,7 @@ struct ContentView: View {
         VStack {
             switch sharedUser.appLevel {
             case .onboarding:
-                IntroView()
+                IntroView2()
             case .authorised:
                 switch sharedUser.user?.userType {
                 case .doctor:

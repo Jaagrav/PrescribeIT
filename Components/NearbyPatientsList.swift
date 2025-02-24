@@ -78,6 +78,9 @@ struct NearbyPatientsList: View {
                 mcManager.start()
             }
         }
+        .onDisappear {
+            mcManager.stop()
+        }
     }
 }
 

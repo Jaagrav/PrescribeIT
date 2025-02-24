@@ -12,7 +12,7 @@ struct FloatingActionButtons: View {
     @State var showCallListDrawer = false
     var appState = AppState.shared
     var notificationManager = NotificationManager.shared
-    @State var showLogoutConfirmation: Bool = false
+    @State var showSettings: Bool = false
     var showNewPrescriptionButton: Bool = true
     @Binding var path: NavigationPath
     
@@ -31,10 +31,10 @@ struct FloatingActionButtons: View {
                 Spacer()
                 VStack(spacing: 12) {
                     Button {
-                        showLogoutConfirmation = true
+                        showSettings = true
                     } label: {
                         VStack {
-                            Image(systemName: "iphone.and.arrow.forward.outward")
+                            Image(systemName: "gear")
                                 .font(.title3)
                         }
                         .frame(width: 45, height: 45)
@@ -63,14 +63,8 @@ struct FloatingActionButtons: View {
         .sheet(isPresented: $showCallListDrawer) {
             CallListView(showDrawer: $showCallListDrawer)
         }
-        .alert("You are about to log out. Are you sure?", isPresented: $showLogoutConfirmation) {
-            Button("Cancel", role: .cancel) {
-                showLogoutConfirmation = false
-            }
-            Button("Log out", role: .destructive) {
-                appState.appLevel = .onboarding
-                notificationManager.unscheduleAllNotifications()
-            }
+        .sheet(isPresented: $showSettings) {
+            SettingsView(showDrawer: $showSettings)
         }
     }
 }

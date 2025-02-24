@@ -129,7 +129,7 @@ struct IntroView: View {
                                 }
                                 .transition(.opacity)
                             }
-                            
+                                                        
                             Spacer()
                         }
                         .padding(.horizontal, 24)
@@ -141,8 +141,15 @@ struct IntroView: View {
                 .frame(maxHeight: UIDevice.current.userInterfaceIdiom == .phone ? .infinity : 400)
                 .tabViewStyle(PageTabViewStyle())
                 .indexViewStyle(PageIndexViewStyle())
-                .animation(.easeInOut, value: currentPage)
                 
+                VStack {
+                    if currentPage == 1 {
+                            Text("None of your data is collected, and it is used completely offline for doctors and patients.")
+                                .font(.caption2)
+                                .padding(.horizontal, 28)
+                    }
+                }
+                .animation(.easeInOut, value: currentPage)
                 Button {
                     if currentPage == 0 {
                         currentPage = 1
@@ -151,7 +158,7 @@ struct IntroView: View {
                     }
                 } label: {
                     HStack {
-                        Text(currentPage == 0 ? "Let's get started" : "Sign in as a \(userType.rawValue)")
+                        Text(currentPage == 0 ? "Let's get started" : "Continue as a \(userType.rawValue)")
                         Spacer()
                         Image(systemName: "arrow.right")
                     }

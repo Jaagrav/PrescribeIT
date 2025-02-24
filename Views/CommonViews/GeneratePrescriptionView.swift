@@ -39,7 +39,7 @@ struct GeneratePrescriptionView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if UIDevice.current.userInterfaceIdiom == .phone && appState.user?.userType == .patient && path.count != 0 {
+            if receivedPrescription != true && appState.user?.userType == .patient {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.fixed(180)),

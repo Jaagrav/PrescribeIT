@@ -22,10 +22,10 @@ class MultipeerManager: NSObject, ObservableObject {
     private var session: MCSession
     private var advertiser: MCNearbyServiceAdvertiser
     private var browser: MCNearbyServiceBrowser
-
+    
     @Published var discoveredPeers: [Peer] = []
     @Published var receivedPrescription: Prescription?
-
+    
     init(user: User, userType: String) {
         self.myPeerID = MCPeerID(displayName: "\(user.firstName) \(user.lastName)")
         self.session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .none)
@@ -40,24 +40,40 @@ class MultipeerManager: NSObject, ObservableObject {
         self.advertiser.delegate = self
         self.browser.delegate = self
     }
-
+    
     func start() {
         advertiser.startAdvertisingPeer()
         browser.startBrowsingForPeers()
     }
-
+    
     func stop() {
         advertiser.stopAdvertisingPeer()
         browser.stopBrowsingForPeers()
         session.disconnect()
     }
-
+    
     func send(peerId: MCPeerID, prescription: Prescription) {
         guard let data = try? JSONEncoder().encode(prescription) else {
             print("Failed to encode prescription")
             return
         }
         try? session.send(data, toPeers: [peerId], with: .reliable)
+    }
+        
+    func reset(user: User, userType: String) {
+        stop()
+        self.myPeerID = MCPeerID(displayName: "\(user.firstName) \(user.lastName)")
+        self.session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .none)
+        self.advertiser = MCNearbyServiceAdvertiser(
+            peer: myPeerID,
+            discoveryInfo: ["userType": user.userType.rawValue, "age": user.age, "gender": user.gender.rawValue],
+            serviceType: serviceType
+        )
+        self.browser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: serviceType)
+        self.session.delegate = self
+        self.advertiser.delegate = self
+        self.browser.delegate = self
+        start()
     }
 }
 
